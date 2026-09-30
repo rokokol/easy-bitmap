@@ -8,12 +8,12 @@ const knobs = [
   { id: 'scale', label: 'scale %', type: 'range', min: 10, max: 400, step: 5, value: 100 },
   { id: 'offsetX', label: 'offset x %', type: 'range', min: -100, max: 100, step: 1, value: 0 },
   { id: 'offsetY', label: 'offset y %', type: 'range', min: -100, max: 100, step: 1, value: 0 },
-  { id: 'smooth', label: 'smooth scaling (photos; off keeps pixel art sharp)', type: 'bool', value: true },
+  { id: 'smooth', label: 'smooth scaling', hint: 'On for photos; off keeps pixel art sharp', type: 'bool', value: true },
   { id: 'background', label: 'transparent as', type: 'select', options: { white: 'white', black: 'black' }, value: 'white' },
   { id: 'brightness', label: 'brightness', type: 'range', min: -100, max: 100, step: 1, value: 0 },
   { id: 'contrast', label: 'contrast', type: 'range', min: -100, max: 100, step: 1, value: 0 },
   { id: 'gamma', label: 'gamma', type: 'range', min: 20, max: 300, step: 5, value: 100 },
-  { id: 'invert', label: 'invert (light pixels lit)', type: 'bool', value: false },
+  { id: 'invert', label: 'invert', hint: 'Light pixels of the image become lit', type: 'bool', value: false },
   { id: 'algorithm', label: 'dithering', type: 'select', options: algorithms, value: 'floyd' },
   { id: 'threshold', label: 'threshold', type: 'range', min: 0, max: 100, step: 1, value: 50 },
   { id: 'serpentine', label: 'serpentine scan', type: 'bool', value: true },
@@ -24,6 +24,7 @@ function buildControls(container, values, onInput) {
   for (const k of knobs) {
     const label = document.createElement('label')
     label.className = k.type === 'bool' ? 'check' : 'field'
+    if (k.hint) label.title = k.hint
     const text = document.createElement('span')
     text.textContent = k.label
     let input
