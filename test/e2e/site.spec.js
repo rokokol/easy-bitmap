@@ -52,6 +52,28 @@ test('undo and redo walk every change back and forth', async ({ page }) => {
   await expect(code(page)).toContainText('0x7F')
 })
 
+// A key event as a Russian layout sends it: the letter differs, the physical key does not
+async function pressOnRussianLayout(page, code, key, modifiers = {}) {
+  await page.evaluate(
+    ([code, key, modifiers]) =>
+      document.body.dispatchEvent(new KeyboardEvent('keydown', { code, key, bubbles: true, cancelable: true, ...modifiers })),
+    [code, key, modifiers],
+  )
+}
+
+test('shortcuts follow the physical key on any keyboard layout', async ({ page }) => {
+  await tap(page, 0, 0, 8, 8)
+  await expect(code(page)).toContainText('0x80')
+  await pressOnRussianLayout(page, 'KeyZ', 'я', { ctrlKey: true })
+  await expect(code(page)).not.toContainText('0x80')
+  await pressOnRussianLayout(page, 'KeyZ', 'Я', { ctrlKey: true, shiftKey: true })
+  await expect(code(page)).toContainText('0x80')
+  await pressOnRussianLayout(page, 'KeyE', 'у')
+  await expect(page.locator('[data-tool=eraser]')).toHaveAttribute('aria-checked', 'true')
+  await pressOnRussianLayout(page, 'KeyI', 'ш')
+  await expect(code(page)).toContainText('0x7F')
+})
+
 test('the exported code imports back to the same picture', async ({ page }) => {
   for (const [x, y] of [[0, 0], [3, 4], [7, 7], [5, 1]]) await tap(page, x, y, 8, 8)
   await expect(code(page)).toContainText('0x80')

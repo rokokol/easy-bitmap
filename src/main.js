@@ -5,7 +5,7 @@ import { emit, emitChars, ruleText, identifier } from './core/cemit.js'
 import { parse, inferSize, decode, ParseError } from './core/cparse.js'
 import { createHistory } from './core/history.js'
 import { encodeBitmap, encodeChars, decodeHash } from './core/hash.js'
-import { displays, visibleDisplays, visibleFormats, visibleTools, NOOB_SIZES } from './core/displays.js'
+import { displays, visibleDisplays, visibleFormats, tools, visibleTools, NOOB_SIZES } from './core/displays.js'
 import { color } from './ui/colors.js'
 import { createEditor } from './ui/editor.js'
 import { renderBitmapPreview, renderCharsPreview } from './ui/preview.js'
@@ -602,25 +602,26 @@ function wire() {
   addEventListener('keydown', e => {
     // Text fields, lists and sliders keep their keys; a focused checkbox or button does not
     if (e.target.closest('input:not([type=checkbox]), textarea, select, dialog')) return
-    const key = e.key.toLowerCase()
+    // e.code names the physical key, so shortcuts work the same on any layout
+    const code = e.code
     if (e.ctrlKey || e.metaKey) {
-      if (key === 'z' && e.shiftKey) redo()
-      else if (key === 'z') undo()
-      else if (key === 'y') redo()
+      if (code === 'KeyZ' && e.shiftKey) redo()
+      else if (code === 'KeyZ') undo()
+      else if (code === 'KeyY') redo()
       else return
       e.preventDefault()
       return
     }
-    const byKey = { d: 'pen', e: 'eraser', l: 'line', f: 'fill', r: e.shiftKey ? 'rectFill' : 'rect' }
-    const arrows = { arrowup: [0, -1], arrowdown: [0, 1], arrowleft: [-1, 0], arrowright: [1, 0] }
-    if (byKey[key]) selectTool(byKey[key])
-    else if (key === '[' || key === ']') {
-      state.pen = Math.max(1, Math.min(8, state.pen + (key === ']' ? 1 : -1)))
+    const tool = tools.find(t => `Key${t.key.replace('Shift+', '')}` === code && t.key.startsWith('Shift+') === e.shiftKey)
+    const arrows = { ArrowUp: [0, -1], ArrowDown: [0, 1], ArrowLeft: [-1, 0], ArrowRight: [1, 0] }
+    if (tool) selectTool(tool.id)
+    else if (code === 'BracketLeft' || code === 'BracketRight') {
+      state.pen = Math.max(1, Math.min(8, state.pen + (code === 'BracketRight' ? 1 : -1)))
       $('pen-size').value = state.pen
       $('pen-size-value').value = state.pen
-    } else if (key === 'i') change(B.invert)
-    else if (arrows[key] && !state.noob) change(old => B.shift(old, ...arrows[key], $('shift-wrap').checked))
-    else if (state.mode === 'chars' && /^[1-8]$/.test(key)) selectSlot(+key - 1)
+    } else if (code === 'KeyI') change(B.invert)
+    else if (arrows[code] && !state.noob) change(old => B.shift(old, ...arrows[code], $('shift-wrap').checked))
+    else if (state.mode === 'chars' && /^Digit[1-8]$/.test(code)) selectSlot(+code.slice(5) - 1)
     else return
     e.preventDefault()
   })
