@@ -110,16 +110,19 @@ test('LCD characters: each slot is 5x8 and the export grows with the slots used'
   await expect(page.locator('#usage')).toContainText('i < 3; i++) lcd.createChar(i, chars[i]);')
 })
 
-test('a shared link opens the same picture in a fresh page', async ({ page, context }) => {
+test('a shared link opens the same picture in a fresh page', async ({ page, context, browserName }) => {
   await page.click('.switch')
   await page.selectOption('#display', 'max32x8')
   await tap(page, 31, 7, 32, 8)
   await tap(page, 9, 3, 32, 8)
   await expect(code(page)).toContainText('0x40')
   const exported = await code(page).textContent()
-  await context.grantPermissions(['clipboard-read', 'clipboard-write'])
+  // Only Chromium lets a test grant the clipboard; elsewhere the page says it could not copy,
+  // and the link is in the address bar all the same
+  if (browserName === 'chromium') await context.grantPermissions(['clipboard-read', 'clipboard-write'])
   await page.click('#share')
   await expect(page).toHaveURL(/#1\.b\.32\.8\./)
+  if (browserName === 'chromium') await expect(page.locator('#toast')).toHaveText('link copied')
   const other = await context.newPage()
   await other.goto(page.url())
   await expect(other.locator('#code')).toHaveText(exported)

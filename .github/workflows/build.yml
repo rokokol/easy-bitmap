@@ -57,8 +57,8 @@ jobs:
         with:
           node-version-file: .node-version
       - run: npm ci
-      # The browser build that matches the Playwright version in package-lock.json
-      - run: ./node_modules/.bin/playwright install --with-deps chromium
+      # The browser builds that match the Playwright version in package-lock.json
+      - run: ./node_modules/.bin/playwright install --with-deps chromium firefox webkit
       - run: ./node_modules/.bin/playwright test
 
   lint:

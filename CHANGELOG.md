@@ -26,6 +26,7 @@ The site has no versions: what is live at [bitmap.rokokol.art](https://bitmap.ro
 
 - GyverOLED, U8g2 and MD_MAX72xx pictures no longer come out scrambled: each preset writes the byte layout its library reads
 - The grid no longer breaks rows apart on narrow windows
+- The editor refits to a new window width without a layout loop, which Safari reported as an error
 
 ### Removed
 

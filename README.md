@@ -72,5 +72,11 @@ The tests need Node.js; the library check also needs `g++`:
 ```sh
 npm test            # the export, import and editing logic
 npm run test:libs   # every preset drawn by its real library
-npm ci && npm run test:e2e   # the page in a browser
+npm ci && npm run test:e2e   # the page in Chromium, Firefox and WebKit
+```
+
+The browser tests fetch their browsers with `npx playwright install`. On NixOS those do not start; use the ones nixpkgs builds for the same Playwright version instead:
+
+```sh
+PLAYWRIGHT_BROWSERS_PATH=$(nix build --no-link --print-out-paths nixpkgs#playwright-driver.browsers) npm run test:e2e
 ```

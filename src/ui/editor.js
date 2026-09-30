@@ -23,8 +23,10 @@ export function createEditor(canvas, wrap, { onStart, onMove, onEnd, onHover }) 
   }
 
   function fit(b) {
-    // The wrap's padding leaves room for the outline and the offset shadow
-    const room = Math.max(160, wrap.clientWidth - 16)
+    // The border box, scrollbar included: a scrollbar that comes and goes with the canvas
+    // must not change the room the canvas is fitted to. The padding keeps the outline and
+    // the offset shadow inside
+    const room = Math.max(160, wrap.offsetWidth - 16)
     const tall = Math.max(160, Math.min(innerHeight * 0.62, 640))
     cell = Math.max(MIN_CELL, Math.min(MAX_CELL, Math.floor(Math.min(room / b.w, tall / b.h))))
     const dpr = devicePixelRatio || 1
@@ -92,7 +94,18 @@ export function createEditor(canvas, wrap, { onStart, onMove, onEnd, onHover }) 
   canvas.addEventListener('pointercancel', finish)
   canvas.addEventListener('pointerleave', () => onHover(null))
 
-  new ResizeObserver(() => shown && render(shown, { ...options, refit: true })).observe(wrap)
+  // Only a new border-box width refits: the wrap's height and its scrollbars follow the
+  // canvas. The refit waits for the next frame, since resizing the wrap inside its own
+  // observer is a loop that WebKit reports as an error
+  let width = 0
+  let frame = 0
+  new ResizeObserver(([entry]) => {
+    const w = Math.round(entry.borderBoxSize[0].inlineSize)
+    if (w === width) return
+    width = w
+    cancelAnimationFrame(frame)
+    frame = requestAnimationFrame(() => shown && render(shown, { ...options, refit: true }))
+  }).observe(wrap)
 
   return {
     render,
