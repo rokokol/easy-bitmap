@@ -28,6 +28,7 @@ Libraries disagree about what a bitmap is. GyverOLED reads vertical bytes, U8g2 
 - **Noob mode**, on by default: 8×8 and 16×16 LED matrices, pen and eraser, nothing else
 - **Import** a C array from any of the libraries below, or an image with fit, tone and dithering controls
 - **Tools**: pen, eraser, line, rectangle, fill, rotate, flip, invert, shift, undo for every step
+- **Text** in the 5×8 font GyverGFX prints with, pixel for pixel as the library draws it, or in Departure Mono
 - **A preview** of the picture on the display it is meant for
 - **A link** that holds the whole picture, and the last picture kept in the browser
 - Light and dark themes, or the system's

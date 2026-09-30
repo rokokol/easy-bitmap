@@ -93,3 +93,5 @@ test/libs/vendor/u8g2/csrc/u8x8_u16toa.c olikraus/u8g2 csrc/u8x8_u16toa.c d6c849
 test/libs/vendor/u8g2/sys/bitmap/common/u8x8_d_bitmap.c olikraus/u8g2 sys/bitmap/common/u8x8_d_bitmap.c d6c8499c5f2707cac8eccd09fd8f677d12b17977 5fad80d58c7177894e8496d3a16056097b6319dd
 check-pins.sh rokokol/ci-skill templates/check-pins.sh fc54eb000b55d210a9a54fa619371418bf3121a6 c86f8288606d532f7982206eea8e8a310315d7f6
 .github/workflows/vendor-sync.yml rokokol/ci-skill templates/github/workflows/vendor-sync.yml fc54eb000b55d210a9a54fa619371418bf3121a6 a5bde77f98d55a43b2c993f4c96a952e0b68010d manual
+assets/font5x8.h GyverLibs/GyverGFX src/fonts/font5x8.h 58b9dfe78af4df377662630b483662e8f67e3ab2 4127f21eeb0e9b8a934913c08d1c4c0e9ad5bad1
+assets/GyverGFX-LICENSE GyverLibs/GyverGFX LICENSE 58b9dfe78af4df377662630b483662e8f67e3ab2 51a308e9653fb9836f5a1cb03a68c6f03974f28f

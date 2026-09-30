@@ -59,6 +59,14 @@ export function createEditor(canvas, wrap, { onStart, onMove, onEnd, onHover }) 
     ctx.fillStyle = palette.guide
     if (gx) for (let x = gx; x < b.w; x += gx) ctx.fillRect(x * cell - 1, 0, 2, H)
     if (gy) for (let y = gy; y < b.h; y += gy) ctx.fillRect(0, y * cell - 1, W, 2)
+    // ghost: { bitmap, x, y }, what a click would place, drawn over the picture
+    if (opts.ghost) {
+      const { bitmap: g, x: ox, y: oy } = opts.ghost
+      ctx.globalAlpha = 0.6
+      for (let y = 0; y < g.h; y++)
+        for (let x = 0; x < g.w; x++) if (g.data[y * g.w + x]) ctx.fillRect((ox + x) * cell, (oy + y) * cell, cell, cell)
+      ctx.globalAlpha = 1
+    }
   }
 
   function cellAt(e) {

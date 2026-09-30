@@ -57,6 +57,19 @@
     <aside class="tools" aria-label="Tools">
       <div class="tool-group" id="tool-buttons" role="radiogroup" aria-label="Tool"></div>
 
+      <div class="text-options" id="text-options" hidden>
+        <label class="field" for="text-input">
+          <span>text</span>
+          <textarea id="text-input" rows="2" spellcheck="false">Hi!</textarea>
+        </label>
+        <label class="field" for="text-font"><span>font</span><select id="text-font"></select></label>
+        <label class="field" for="text-size">
+          <span>size</span>
+          <select id="text-size"><option>1</option><option>2</option><option>3</option><option>4</option></select>
+        </label>
+        <p class="note">click places it, right click erases it</p>
+      </div>
+
       <label class="field" for="pen-size">
         <span>pen <output id="pen-size-value">1</output> px</span>
         <input type="range" id="pen-size" min="1" max="8" value="1">

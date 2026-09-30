@@ -110,6 +110,19 @@ test('floodFill survives a large empty bitmap without recursion limits', () => {
   assert.ok(b.data.every(v => v === 1))
 })
 
+test('scale turns every pixel into an n x n square', () => {
+  assert.deepEqual(rows(B.scale(art('#.', '.#'), 2)), ['##..', '##..', '..##', '..##'])
+  assert.ok(B.equals(B.scale(art('#.'), 1), art('#.')))
+})
+
+test('stampOn lights or clears the lit pixels of a picture at an offset, clipped', () => {
+  const b = art('....', '....')
+  B.stampOn(b, art('##'), 3, 1, 1)
+  assert.deepEqual(rows(b), ['....', '...#'])
+  B.stampOn(b, art('##'), 2, 1, 0)
+  assert.deepEqual(rows(b), ['....', '....'])
+})
+
 test('clone is independent of its source', () => {
   const a = art('#.')
   const c = B.clone(a)

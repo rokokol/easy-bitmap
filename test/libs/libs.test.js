@@ -4,13 +4,14 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { execFileSync } from 'node:child_process'
-import { mkdirSync, writeFileSync, readdirSync, existsSync, statSync } from 'node:fs'
+import { mkdirSync, writeFileSync, readFileSync, readdirSync, existsSync, statSync } from 'node:fs'
 import { dirname, join, basename } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { targets } from './targets.mjs'
 import { byId, fits, optionDefaults } from '../../src/core/formats.js'
 import { emit, emitChars } from '../../src/core/cemit.js'
 import { toRows, create, set } from '../../src/core/bitmap.js'
+import { loadFont, renderFont } from '../../src/core/text.js'
 import { random } from '../unit/helpers.js'
 
 const here = dirname(fileURLToPath(import.meta.url))
@@ -110,29 +111,57 @@ function runs(id, t) {
   return t.variants.map((v, i) => ({ key: `${id}-${i}`, title: `, ${v.name}`, opts: v.opts ?? {}, defines: v.defines ?? [] }))
 }
 
+// Builds the harness of target t around gen.h, runs it, and requires it to light exactly
+// the pixels of each expected picture
+function draws(key, t, pics, gen, runDefines = []) {
+  const dir = join(build, key)
+  mkdirSync(dir, { recursive: true })
+  const from = root(t)
+  const includes = [dir, join(here, 'harness'), platform, epoxy, ...t.include.map(p => join(from, p))]
+  const defines = [...(t.defines ?? []), ...runDefines]
+  const libObjects = t.sources.map(s => compile(join(from, s), join(build, 'lib', key, basename(s) + '.o'), includes, defines))
+  writeFileSync(join(dir, 'gen.h'), gen)
+  const main = join(dir, 'harness.o')
+  execFileSync('g++', [...cxx, ...host, ...defines, ...includes.map(i => '-I' + i), '-c', join(here, 'harness', t.harness), '-o', main], { stdio: 'pipe' })
+  const exe = join(dir, 'harness')
+  execFileSync('g++', [main, ...libObjects, ...coreObjects(), ...(t.link ?? []), '-o', exe], { stdio: 'pipe' })
+  const out = execFileSync(exe, { encoding: 'utf8' }).split('\n')
+  pics.forEach((b, i) => {
+    const at = out.indexOf(`pic ${i}`)
+    assert.ok(at >= 0, `picture ${i} missing from the harness output`)
+    assert.deepEqual(out.slice(at + 1, at + 1 + b.h), toRows(b), `picture ${i}, ${b.w}x${b.h}`)
+  })
+}
+
 for (const [id, t] of Object.entries(targets)) {
   if (only && !only.includes(id)) continue
   const format = byId(t.format ?? id)
   for (const run of runs(id, t)) test(`${t.lib ?? format.lib}: ${format.label}${run.title} draws what was exported`, () => {
-    const dir = join(build, run.key)
-    mkdirSync(dir, { recursive: true })
-    const from = root(t)
-    const includes = [dir, join(here, 'harness'), platform, epoxy, ...t.include.map(p => join(from, p))]
-    const defines = [...(t.defines ?? []), ...run.defines]
-    const libObjects = t.sources.map(s => compile(join(from, s), join(build, 'lib', run.key, basename(s) + '.o'), includes, defines))
     const pics = t.chars ? glyphStrips() : t.sizes.filter(([w, h]) => fits(format, w, h)).flatMap(([w, h]) => pictures(w, h))
     assert.ok(pics.length > 0, 'no picture size fits this preset')
     const opts = { ...optionDefaults(format), ...run.opts }
-    writeFileSync(join(dir, 'gen.h'), generate(format, pics, opts, t.chars))
-    const main = join(dir, 'harness.o')
-    execFileSync('g++', [...cxx, ...host, ...defines, ...includes.map(i => '-I' + i), '-c', join(here, 'harness', t.harness), '-o', main], { stdio: 'pipe' })
-    const exe = join(dir, 'harness')
-    execFileSync('g++', [main, ...libObjects, ...coreObjects(), ...(t.link ?? []), '-o', exe], { stdio: 'pipe' })
-    const out = execFileSync(exe, { encoding: 'utf8' }).split('\n')
-    pics.forEach((b, i) => {
-      const at = out.indexOf(`pic ${i}`)
-      assert.ok(at >= 0, `picture ${i} missing from the harness output`)
-      assert.deepEqual(out.slice(at + 1, at + 1 + b.h), toRows(b), `picture ${i}, ${b.w}x${b.h}`)
-    })
+    draws(run.key, t, pics, generate(format, pics, opts, t.chars), run.defines)
   })
 }
+
+// The text tool renders the 5x8 font itself; GyverGFX print() is the oracle
+const texts = [
+  ['Hello, 42! {x|y}~', 1],
+  ['Привет, ёжик', 1],
+  ['ЁЛКА\nabc', 1],
+  ['Hi\nЁж', 2],
+  ['Z', 3],
+]
+
+if (!only || only.includes('text'))
+  test('GyverGFX: print() draws the text the site renders in the 5x8 font', () => {
+    const font = loadFont(readFileSync(join(here, '../../assets/font5x8.h'), 'utf8'))
+    const pics = texts.map(([s, scale]) => renderFont(s, font, scale))
+    const c = s => JSON.stringify(s)
+    const parts = texts.map(
+      ([s, scale], i) => `namespace pic${i} {\nvoid draw() { gfx.setScale(${scale}); gfx.setCursor(0, 0); gfx.print(${c(s)}); }\n}\n`,
+    )
+    const table = pics.map((b, i) => `  { pic${i}::draw, ${b.w}, ${b.h} },`).join('\n')
+    const gen = `${parts.join('')}struct Pic { void (*draw)(); int w, h; };\nconst Pic pics[] = {\n${table}\n};\nconst int pic_count = ${pics.length};\n`
+    draws('gyvergfx-text', targets.gyvergfx, pics, gen)
+  })

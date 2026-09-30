@@ -24,6 +24,14 @@ export const tools = [
   { id: 'rect', short: 'rect', label: 'Rectangle', key: 'R' },
   { id: 'rectFill', short: 'box', label: 'Filled rectangle', key: 'Shift+R' },
   { id: 'fill', short: 'fill', label: 'Fill', key: 'F' },
+  { id: 'text', short: 'text', label: 'Text', key: 'T' },
+]
+
+// The fonts of the text tool: GyverGFX's own 5x8, which print() uses on the device, and
+// Departure Mono, drawn on its native 11 px grid
+export const fonts = [
+  { id: 'gyver5x8', label: '5×8, as GyverGFX print() draws it' },
+  { id: 'departure', label: 'Departure Mono' },
 ]
 
 export function visibleDisplays(noob) {

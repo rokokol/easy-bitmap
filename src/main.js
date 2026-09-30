@@ -5,7 +5,9 @@ import { emit, emitChars, ruleText, identifier } from './core/cemit.js'
 import { parse, inferSize, decode, ParseError } from './core/cparse.js'
 import { createHistory } from './core/history.js'
 import { encodeBitmap, encodeChars, decodeHash } from './core/hash.js'
-import { displays, visibleDisplays, visibleFormats, tools, visibleTools, NOOB_SIZES } from './core/displays.js'
+import { displays, visibleDisplays, visibleFormats, tools, visibleTools, fonts, NOOB_SIZES } from './core/displays.js'
+import { loadFont, renderFont } from './core/text.js'
+import { loadDeparture, renderDeparture } from './ui/departure.js'
 import { color } from './ui/colors.js'
 import { createEditor } from './ui/editor.js'
 import { renderBitmapPreview, renderCharsPreview } from './ui/preview.js'
@@ -34,6 +36,7 @@ const state = {
   pen: 1,
   slots: Array.from({ length: SLOTS }, () => B.create(5, 8)),
   slot: 0,
+  text: { value: 'Hi!', font: 'gyver5x8', size: 1 },
 }
 
 const histories = { bitmap: createHistory(), chars: createHistory() }
@@ -104,6 +107,11 @@ const editor = createEditor($('editor'), $('canvas-wrap'), {
   onStart(p, button) {
     let value = button === 'secondary' ? 0 : 1
     if (state.tool === 'eraser') value = 1 - value
+    if (state.tool === 'text') {
+      const t = textBitmap()
+      if (t.w) change(old => (B.stampOn(old, t, p.x, p.y, value), old))
+      return
+    }
     histories[state.mode].record(snapshot())
     const b = current()
     stroke = { from: p, last: p, value, base: B.clone(b) }
@@ -125,8 +133,11 @@ const editor = createEditor($('editor'), $('canvas-wrap'), {
   },
   onHover(p) {
     const b = current()
-    const where = p && B.inside(b, p.x, p.y) ? `${p.x}, ${p.y}` : ''
-    $('status').textContent = [where, `${b.w}×${b.h}`].filter(Boolean).join('   ')
+    const inside = p && B.inside(b, p.x, p.y)
+    const moved = state.tool === 'text' && (inside ? p.x !== hover?.x || p.y !== hover?.y : hover)
+    hover = inside ? p : null
+    if (moved) refresh({ light: true })
+    $('status').textContent = [inside ? `${p.x}, ${p.y}` : '', `${b.w}×${b.h}`].filter(Boolean).join('   ')
   },
 })
 
@@ -159,7 +170,8 @@ function guides(b) {
 function refresh({ light = false, controls = false } = {}) {
   const b = current()
   const g = guides(b)
-  editor.render(b, { guides: g })
+  const ghost = state.tool === 'text' && hover && !stroke ? { bitmap: textBitmap(), ...hover } : undefined
+  editor.render(b, { guides: g, ghost })
   $('guide-note').textContent = g.note ?? ''
   $('status').textContent = `${b.w}×${b.h}`
   $('undo').disabled = !histories[state.mode].canUndo()
@@ -280,6 +292,11 @@ function buildControls() {
       return b
     }),
   )
+  $('text-options').hidden = state.tool !== 'text'
+  if (!$('text-font').options.length) $('text-font').replaceChildren(...fonts.map(f => new Option(f.label, f.id)))
+  $('text-font').value = state.text.font
+  $('text-size').value = String(state.text.size)
+  $('text-input').value = state.text.value
 
   // displays
   const shownDisplays = visibleDisplays(state.noob)
@@ -354,6 +371,28 @@ function selectTool(id) {
   if (!visibleTools(state.noob).some(t => t.id === id)) return
   state.tool = id
   for (const b of $('tool-buttons').children) b.setAttribute('aria-checked', String(b.dataset.tool === id))
+  $('text-options').hidden = id !== 'text'
+  refresh({ light: true })
+}
+
+// ---------- text ----------
+
+let hover = null
+let gyverFont = []
+let textCache = { key: '', bitmap: B.create(0, 0) }
+
+// The text as a bitmap in the chosen font and size, rendered again only when one changes
+function textBitmap() {
+  const { value, font, size } = state.text
+  const key = `${font}|${size}|${gyverFont.length}|${value}`
+  if (textCache.key !== key)
+    textCache = { key, bitmap: font === 'departure' ? renderDeparture(value, size) : renderFont(value, gyverFont, size) }
+  return textCache.bitmap
+}
+
+async function loadFonts() {
+  const [source] = await Promise.all([fetch('assets/font5x8.h').then(r => r.text()), loadDeparture()])
+  gyverFont = loadFont(source)
 }
 
 function resizeTo(w, h, label) {
@@ -498,6 +537,7 @@ function remember() {
     charsName: state.charsName,
     radix: state.radix,
     pen: state.pen,
+    text: state.text,
   })
 }
 
@@ -509,7 +549,7 @@ function restoreSaved() {
   }
   const c = saved.chars && decodeHash(saved.chars)
   if (c?.kind === 'chars') c.slots.forEach((s, i) => (state.slots[i] = s))
-  for (const k of ['mode', 'display', 'options', 'name', 'charsName', 'radix', 'pen']) if (saved[k] !== undefined) state[k] = saved[k]
+  for (const k of ['mode', 'display', 'options', 'name', 'charsName', 'radix', 'pen', 'text']) if (saved[k] !== undefined) state[k] = saved[k]
   $('pen-size').value = state.pen
   $('pen-size-value').value = state.pen
 }
@@ -524,6 +564,16 @@ function wire() {
     })
 
   $('noob').addEventListener('change', e => setNoob(e.target.checked))
+
+  const textInput = (id, key, read) =>
+    $(id).addEventListener('input', e => {
+      state.text = { ...state.text, [key]: read(e.target.value) }
+      refresh({ light: true })
+      remember()
+    })
+  textInput('text-input', 'value', v => v)
+  textInput('text-font', 'font', v => v)
+  textInput('text-size', 'size', Number)
 
   $('pen-size').addEventListener('input', e => {
     state.pen = +e.target.value
@@ -652,3 +702,4 @@ initTheme($('theme'), $('theme-icon'), () => {
   refresh()
 })
 refresh({ controls: true })
+loadFonts().then(() => refresh({ light: true }))

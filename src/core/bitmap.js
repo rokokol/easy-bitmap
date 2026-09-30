@@ -72,6 +72,17 @@ export function resize(b, w, h) {
   return map(b, w, h, (x, y) => get(b, x, y))
 }
 
+export function scale(b, n) {
+  return map(b, b.w * n, b.h * n, (x, y) => get(b, Math.floor(x / n), Math.floor(y / n)))
+}
+
+// Sets to v every pixel of b under a lit pixel of src placed at (ox, oy); unlit ones leave
+// b alone, so text or a stamp keeps the picture around it
+export function stampOn(b, src, ox, oy, v) {
+  for (let y = 0; y < src.h; y++)
+    for (let x = 0; x < src.w; x++) if (src.data[y * src.w + x]) set(b, ox + x, oy + y, v)
+}
+
 // Pastes src into dst with its top-left corner at (ox, oy)
 export function paste(dst, src, ox, oy) {
   const out = clone(dst)

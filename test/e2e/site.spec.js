@@ -110,9 +110,28 @@ test('importing a 16x16 array switches the display to the 16x16 matrix', async (
   await expect(page.locator('#preview-caption')).toHaveText('LED matrix 16×16')
 })
 
+test('the text tool stamps the 5x8 font and Departure Mono, and is not in noob mode', async ({ page }) => {
+  await expect(page.locator('[data-tool=text]')).toHaveCount(0)
+  await page.click('.switch')
+  await page.selectOption('#display', 'oled128x32')
+  await page.click('[data-tool=text]')
+  await expect(page.locator('#text-options')).toBeVisible()
+  await page.fill('#text-input', 'Ж')
+  await tap(page, 0, 0, 128, 32)
+  // Ж in the 5x8 font: columns 77 08 7F 08 77, so the first page reads them as bytes
+  await expect(code(page)).toContainText('0x77, 0x08, 0x7F, 0x08, 0x77, 0x00')
+  await page.click('#clear')
+  await page.selectOption('#text-font', 'departure')
+  await tap(page, 0, 0, 128, 32)
+  await expect(code(page)).not.toContainText('0x77, 0x08, 0x7F')
+  await expect.poll(async () => ((await code(page).textContent()).match(/0x[1-9A-F][0-9A-F]|0x0[1-9A-F]/g) ?? []).length).toBeGreaterThan(3)
+  await tap(page, 0, 0, 128, 32, true)
+  await expect.poll(async () => ((await code(page).textContent()).match(/0x[1-9A-F][0-9A-F]|0x0[1-9A-F]/g) ?? []).length).toBe(0)
+})
+
 test('noob mode off reveals every tool and display; back on crops, and undo restores', async ({ page }) => {
   await page.click('.switch')
-  await expect(page.locator('#tool-buttons .tool')).toHaveCount(6)
+  await expect(page.locator('#tool-buttons .tool')).toHaveCount(7)
   await expect(page.locator('#import-image')).toBeVisible()
   await page.selectOption('#display', 'oled128x64')
   await expect(code(page)).toContainText('#define BITMAP_W 128')
