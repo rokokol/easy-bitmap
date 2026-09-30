@@ -1,0 +1,14 @@
+{
+  "name": "easy-bitmap",
+  "private": true,
+  "type": "module",
+  "description": "A 1-bit pixel editor that exports C arrays for Arduino displays; the site itself has no dependencies, these are for its tests",
+  "scripts": {
+    "test": "node --test 'test/unit/*.test.js'",
+    "test:libs": "node --test test/libs/libs.test.js",
+    "test:e2e": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.63.0"
+  }
+}

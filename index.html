@@ -1,116 +1,194 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>🖼️ Easy Bitmap Maker 🖼️</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="icon" href="favicon.ico">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="description" content="Draw 1-bit bitmaps and export them as C arrays for Arduino displays, LED matrices and LCD custom characters">
+  <title>Easy Bitmap</title>
+  <link rel="icon" href="favicon.ico">
+  <link rel="preload" href="assets/DepartureMono-Regular.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/ddlc-palette.css">
+  <link rel="stylesheet" href="styles.css">
+  <script>
+    // Applies a pinned theme before the first paint; "system" leaves data-theme unset
+    try {
+      const t = localStorage.getItem('easy-bitmap:theme')
+      if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t
+    } catch {}
+  </script>
+  <script type="module" src="src/main.js"></script>
 </head>
 <body>
-    <div id="localization">
-        <button id="lang-switch">🇺🇸 English</button>
-    </div>
-    <h1 id="title">🖼️ Easy Bitmap Maker 🖼️</h1>
-    <div id="controls">
-        <label for="bitmap-type" id="bitmap-type-label">Bitmap Type:</label>
-        <select id="bitmap-type">
-            <option value="uint8_t">uint8_t (8x8)</option>
-            <option value="uint16_t">uint16_t (16x16)</option>
-            <option value="uint32_t">uint32_t (32x32)</option>
-            <option value="uint64_t">uint64_t (64x64)</option>
-        </select>
-        
-        <label for="pen-size" id="pen-size-label">Pen Size:</label>
-        <input type="range" id="pen-size" min="1" max="10" value="1">
-        <span id="pen-size-value">1</span>px
-        
-        <button id="invert-colors">🔄 Invert Colors</button>
-        <button id="import-bitmap">📥 Import Bitmap</button>
-        <button id="clear-grid">🗑️ Clear Grid</button>
-        <button id="help-button">❓ Help</button>
-    </div>
+  <canvas id="cloud" aria-hidden="true"></canvas>
 
-    <div id="modes">
-        <button id="mode-fill" class="mode-button active">🖌️ Fill</button>
-        <button id="mode-erase" class="mode-button">🧹 Erase</button>
-    </div>
+  <header class="bar">
+    <a class="brand" href="./">
+      <svg class="brand-mark" viewBox="0 0 8 8" aria-hidden="true" shape-rendering="crispEdges">
+        <path d="M1 1h2v2H1zM5 1h2v2H5zM0 4h1v1H0zM7 4h1v1H7zM1 5h6v1H1zM2 6h4v1H2z"/>
+      </svg>
+      <span>easy bitmap</span>
+    </a>
 
-    <div id="transform-controls" style="text-align:center; margin-bottom:20px;">
-        <button id="rotate-90">↩️ Rotate 90°</button>
-        <button id="flip-horizontal">↔️ Flip Horizontal</button>
-        <button id="flip-vertical">↕️ Flip Vertical</button>
-    </div>
+    <nav class="tabs" role="tablist" aria-label="Mode">
+      <button role="tab" id="tab-bitmap" data-mode="bitmap" aria-selected="true">Bitmap</button>
+      <button role="tab" id="tab-chars" data-mode="chars" aria-selected="false">LCD characters</button>
+    </nav>
 
-    <div id="grid-container"></div>
-    <button id="generate-code">💾 Generate C++ Code</button>
-    <div id="cpp-code-container" style="display:none;">
-        <h2 id="cpp-code-title">📄 Generated C++ Code</h2>
-        <button id="generate-bitmap">📋 Copy Code</button>
-        <pre id="cpp-code"></pre>
+    <div class="bar-end">
+      <label class="switch" title="Only 8×8 and 16×16 LED matrices, pen and eraser">
+        <input type="checkbox" id="noob" checked>
+        <span class="switch-track" aria-hidden="true"></span>
+        <span>noob mode</span>
+      </label>
+      <button class="icon-button" id="theme" type="button" aria-label="Theme: system" title="Theme: system">
+        <svg viewBox="0 0 8 8" aria-hidden="true" shape-rendering="crispEdges"><path id="theme-icon"/></svg>
+      </button>
+      <a class="icon-button" href="https://github.com/rokokol/easy-bitmap" aria-label="Source on GitHub" title="Source on GitHub">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+      </a>
+      <a class="icon-button" href="https://t.me/rokokoschannel" aria-label="Telegram channel" title="Telegram channel">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M15.4 1.6.6 7.3c-.8.3-.8.9 0 1.1l3.7 1.2 1.4 4.4c.2.5.4.6.8.2l2-1.8 3.9 2.9c.7.4 1.2.2 1.4-.7l2.5-11.9c.3-1.1-.4-1.6-1.2-1.3zM5.2 9.4l7.2-4.6c.4-.2.6 0 .4.2l-5.9 5.3-.3 2.7-1.4-3.6z"/></svg>
+      </a>
     </div>
-    <div id="message-container"></div>
-    <div id="links">
-        <a href="https://t.me/rokokoschannel" target="_blank">✈️ Telegram</a>
-        <a href="https://github.com/rokokol" target="_blank">🐙 GitHub</a>
-        <a href="https://www.youtube.com/@ilyushechka" target="_blank">📹 YouTube</a>
-    </div>
-    <div id="star-github">
-        ⭐ If you like this project, please <a href="https://github.com/rokokol/easy-bitmap.github.io" target="_blank">star it on GitHub</a>!
-    </div>
+  </header>
 
-    <div id="help-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-button">&times;</span>
-            <h2>📖 Help</h2>
-            <p id="help-intro">Welcome to the Easy Bitmap Maker! Here's how to use the tool:</p>
-            <ul id="help-list">
-                <li class="help-fill-mode">🖌️ <strong>Fill Mode:</strong> LMB draws pixels, RMB erases pixels</li>
-                <li class="help-erase-mode">🧹 <strong>Erase Mode:</strong> LMB erases pixels, RMB draws pixels</li>
-                <li class="help-pen-size">🎨 <strong>Pen Size:</strong> Adjust the pen size using the slider</li>
-                <li class="help-import-bitmap">📥 <strong>Import Bitmap:</strong> Import from C++ code. If size differs, it tries to adjust automatically.</li>
-                <li class="help-generate-code">💾 <strong>Generate C++ Code:</strong> View the C++ array</li>
-                <li class="help-copy-code">📋 <strong>Copy Code:</strong> Copy the generated code</li>
-                <li class="help-invert-colors">🔄 <strong>Invert Colors:</strong> Invert all pixels</li>
-                <li class="help-clear-grid">🗑️ <strong>Clear Grid:</strong> Clear all pixels</li>
-                <li class="help-hotkeys">🔑 <strong>Hotkeys:</strong> <strong>D</strong> for Fill, <strong>E</strong> for Erase</li>
-                <li class="help-rotate">↩️ <strong>Rotate 90°:</strong> Rotate the bitmap by 90 degrees clockwise</li>
-                <li class="help-flip-h">↔️ <strong>Flip Horizontal:</strong> Flip the bitmap horizontally</li>
-                <li class="help-flip-v">↕️ <strong>Flip Vertical:</strong> Flip the bitmap vertically</li>
-                <li class="help-language">🌐 <strong>Language:</strong> Toggle between English and Russian</li>
-                <li class="help-support">⭐ <strong>Support:</strong> If you like this project, star it on GitHub</li>
-            </ul>
-            <p id="help-outro">Happy creating!</p>
+  <main class="work">
+    <aside class="tools" aria-label="Tools">
+      <div class="tool-group" id="tool-buttons" role="radiogroup" aria-label="Tool"></div>
+
+      <label class="field" for="pen-size">
+        <span>pen <output id="pen-size-value">1</output> px</span>
+        <input type="range" id="pen-size" min="1" max="8" value="1">
+      </label>
+
+      <div class="tool-group" aria-label="History">
+        <button class="tool" id="undo" type="button" title="Undo (Ctrl+Z)">undo</button>
+        <button class="tool" id="redo" type="button" title="Redo (Ctrl+Shift+Z)">redo</button>
+      </div>
+
+      <div class="tool-group" aria-label="Transform">
+        <button class="tool" id="invert" type="button" title="Invert (I)">invert</button>
+        <button class="tool" id="clear" type="button" title="Clear">clear</button>
+        <button class="tool" id="rotate" type="button" title="Rotate 90° clockwise">rotate</button>
+        <button class="tool" id="flip-h" type="button" title="Flip left to right">flip ↔</button>
+        <button class="tool" id="flip-v" type="button" title="Flip top to bottom">flip ↕</button>
+      </div>
+
+      <div class="tool-group" id="shift-group" aria-label="Shift" data-advanced>
+        <button class="tool" data-shift="0,-1" type="button" title="Shift up (↑)">↑</button>
+        <button class="tool" data-shift="0,1" type="button" title="Shift down (↓)">↓</button>
+        <button class="tool" data-shift="-1,0" type="button" title="Shift left (←)">←</button>
+        <button class="tool" data-shift="1,0" type="button" title="Shift right (→)">→</button>
+        <label class="check"><input type="checkbox" id="shift-wrap" checked> wrap</label>
+      </div>
+    </aside>
+
+    <section class="stage" aria-label="Canvas">
+      <div class="slots" id="slots" hidden role="radiogroup" aria-label="Character slot"></div>
+      <div class="canvas-wrap" id="canvas-wrap">
+        <canvas id="editor" aria-label="Pixel editor: left button draws, right button erases"></canvas>
+      </div>
+      <p class="status" id="status" aria-live="polite"></p>
+      <figure class="preview">
+        <canvas id="preview" aria-label="Preview on the display"></canvas>
+        <figcaption id="preview-caption"></figcaption>
+      </figure>
+    </section>
+
+    <aside class="panel" aria-label="Settings">
+      <section class="card" id="size-card">
+        <h2>size</h2>
+        <label class="field" for="display">
+          <span>display</span>
+          <select id="display"></select>
+        </label>
+        <div class="row" id="size-custom" data-advanced>
+          <label class="field" for="width"><span>width</span><input type="number" id="width" min="1" max="256" value="16"></label>
+          <label class="field" for="height"><span>height</span><input type="number" id="height" min="1" max="256" value="16"></label>
         </div>
-    </div>
+      </section>
 
-    <div id="import-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-button">&times;</span>
-            <h2 id="import-title">📥 Import Bitmap</h2>
-            <p id="import-instr">Paste your C++ bitmap code or array content below:</p>
-            <textarea id="import-textarea" placeholder="e.g., 0x00, 0xFF, 0xAA"></textarea>
-            <button id="import-confirm">📥 Import</button>
+      <section class="card" id="export-card">
+        <h2>export</h2>
+        <label class="field" for="format">
+          <span>library</span>
+          <select id="format"></select>
+        </label>
+        <p class="note" id="format-note"></p>
+        <div id="format-options"></div>
+        <div class="row">
+          <label class="field" for="name"><span>name</span><input type="text" id="name" value="bitmap" spellcheck="false" autocomplete="off"></label>
+          <div class="field">
+            <span>numbers</span>
+            <div class="segmented" role="radiogroup" aria-label="Number format">
+              <button type="button" data-radix="hex" aria-pressed="true">hex</button>
+              <button type="button" data-radix="bin" aria-pressed="false">bin</button>
+            </div>
+          </div>
         </div>
-    </div>
-
-    <div id="copy-success-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-button">&times;</span>
-            <h2 id="copy-success-title">✅ Success</h2>
-            <p id="copy-success-text">Code copied to clipboard!</p>
+        <pre class="code" id="code" tabindex="0"></pre>
+        <p class="label">draw it with</p>
+        <pre class="code usage" id="usage" tabindex="0"></pre>
+        <div class="row actions">
+          <button class="button primary" id="copy" type="button">copy code</button>
+          <button class="button" id="share" type="button">copy link</button>
         </div>
-    </div>
+      </section>
 
-    <div id="message-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-button">&times;</span>
-            <h2 id="message-modal-title"></h2>
-            <p id="message-modal-text"></p>
-            <button id="message-ok-button" class="message-ok-button">OK</button>
+      <section class="card" id="import-card">
+        <h2>import</h2>
+        <label class="field" for="import-text">
+          <span>C array, any library above</span>
+          <textarea id="import-text" rows="4" spellcheck="false" placeholder="const uint8_t logo[] PROGMEM = { 0x3C, 0x42, ... };"></textarea>
+        </label>
+        <div class="row actions">
+          <button class="button" id="import-code" type="button">import code</button>
+          <button class="button" id="import-image" type="button" data-advanced>import image…</button>
+          <input type="file" id="image-file" accept="image/*" hidden>
         </div>
-    </div>
+        <p class="note" id="import-message" aria-live="polite"></p>
+      </section>
 
-    <script src="script.js"></script>
+      <details class="card help">
+        <summary>keys</summary>
+        <dl>
+          <dt>LMB / RMB</dt><dd>draw / erase (swapped for the eraser)</dd>
+          <dt>D E</dt><dd>pen, eraser</dd>
+          <dt data-advanced>L R ⇧R F</dt><dd data-advanced>line, rectangle, filled, fill</dd>
+          <dt>[ ]</dt><dd>pen size</dd>
+          <dt>I</dt><dd>invert</dd>
+          <dt data-advanced>arrows</dt><dd data-advanced>shift the picture</dd>
+          <dt>Ctrl Z / Ctrl ⇧Z</dt><dd>undo / redo</dd>
+          <dt data-advanced>Ctrl V</dt><dd data-advanced>paste an image</dd>
+        </dl>
+      </details>
+    </aside>
+  </main>
+
+  <dialog id="image-dialog" aria-labelledby="image-title">
+    <form method="dialog" class="dialog">
+      <h2 id="image-title">import image</h2>
+      <div class="image-layout">
+        <canvas id="image-preview" aria-label="Result preview"></canvas>
+        <div class="knobs" id="image-knobs"></div>
+      </div>
+      <div class="row actions">
+        <button class="button" value="cancel" type="submit">cancel</button>
+        <button class="button primary" id="image-apply" value="apply" type="submit">apply</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="size-dialog" aria-labelledby="size-title">
+    <form method="dialog" class="dialog">
+      <h2 id="size-title">which size?</h2>
+      <p class="note" id="size-text"></p>
+      <div class="candidates" id="size-candidates"></div>
+      <div class="row actions"><button class="button" value="cancel" type="submit">cancel</button></div>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 </body>
 </html>
-
