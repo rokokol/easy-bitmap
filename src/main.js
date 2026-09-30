@@ -143,11 +143,24 @@ function shape(p) {
 let pending = 0
 
 // light: only the canvas, during a stroke; the code and the preview wait for its end
+// Lines that mean something on the hardware: MAX7219 module borders, or the 8-row pages a
+// vertical layout packs into one byte per column; the note under the canvas names them
+function guides(b) {
+  if (state.mode !== 'bitmap') return {}
+  const f = format()
+  if (f.modules && (b.w > f.modules || b.h > f.modules))
+    return { x: f.modules, y: f.modules, note: `pink lines: ${f.modules}×${f.modules} MAX7219 modules` }
+  const l = f.layout
+  if (l.kind === 'packed' && l.axis === 'y' && b.h > l.bits)
+    return { y: l.bits, note: `pink lines: pages of ${l.bits} rows, one byte per column` }
+  return {}
+}
+
 function refresh({ light = false, controls = false } = {}) {
   const b = current()
-  const layout = state.mode === 'bitmap' ? format()?.layout : undefined
-  const guides = layout?.kind === 'packed' && layout.bits === 8 ? layout.axis : undefined
-  editor.render(b, { guides })
+  const g = guides(b)
+  editor.render(b, { guides: g })
+  $('guide-note').textContent = g.note ?? ''
   $('status').textContent = `${b.w}×${b.h}`
   $('undo').disabled = !histories[state.mode].canUndo()
   $('redo').disabled = !histories[state.mode].canRedo()

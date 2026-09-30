@@ -88,11 +88,13 @@ const hex6 = rgb => '0x' + rgb.toString(16).padStart(6, '0').toUpperCase()
 const eightStep = { step: 8 }
 
 // usage({ name, W, H, w, h, opts }) returns the lines that draw the array, where W and H
-// are the names of the emitted size constants
+// are the names of the emitted size constants. `modules` is the side of one MAX7219 module,
+// which the editor outlines
 export const formats = [
   {
     id: 'gyvermax7219',
     lib: 'GyverMAX7219',
+    modules: 8,
     label: 'GyverMAX7219 (MAX7219 matrices)',
     group: 'LED matrix',
     noob: true,
@@ -105,6 +107,7 @@ export const formats = [
   {
     id: 'ledcontrol',
     lib: 'LedControl',
+    modules: 8,
     label: 'LedControl (MAX7219 matrices)',
     group: 'LED matrix',
     noob: true,
@@ -127,6 +130,7 @@ export const formats = [
   {
     id: 'md_max72xx',
     lib: 'MD_MAX72xx',
+    modules: 8,
     label: 'MD_MAX72xx (MAX7219 modules in a row)',
     group: 'LED matrix',
     noob: true,

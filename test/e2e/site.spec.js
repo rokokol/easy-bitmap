@@ -85,6 +85,17 @@ test('the exported code imports back to the same picture', async ({ page }) => {
   await expect(code(page)).toHaveText(exported)
 })
 
+test('the pink lines are named: MAX7219 modules, OLED pages, none on a single module', async ({ page }) => {
+  await expect(page.locator('#guide-note')).toHaveText('')
+  await page.selectOption('#display', 'led16')
+  await expect(page.locator('#guide-note')).toHaveText('pink lines: 8×8 MAX7219 modules')
+  await page.click('.switch')
+  await page.selectOption('#display', 'oled128x64')
+  await expect(page.locator('#guide-note')).toHaveText('pink lines: pages of 8 rows, one byte per column')
+  await page.selectOption('#format', 'u8g2')
+  await expect(page.locator('#guide-note')).toHaveText('')
+})
+
 test('importing a 16x16 array switches the display to the 16x16 matrix', async ({ page }) => {
   const rows = Array.from({ length: 16 }, () => '0xFF, 0x00').join(',\n')
   await page.fill('#import-text', `// 16x16\nuint8_t m[] = {\n${rows}\n};`)

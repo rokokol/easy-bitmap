@@ -37,7 +37,7 @@ export function createEditor(canvas, wrap, { onStart, onMove, onEnd, onHover }) 
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
   }
 
-  // guides: 'x' marks every 8 columns (row-major bytes), 'y' every 8 rows (pages)
+  // guides: { x, y } draws a line every x columns and every y rows
   function render(b, opts = {}) {
     if (!palette) readPalette()
     if (!shown || shown.w !== b.w || shown.h !== b.h || opts.refit) fit(b)
@@ -55,11 +55,10 @@ export function createEditor(canvas, wrap, { onStart, onMove, onEnd, onHover }) 
       for (let x = 1; x < b.w; x++) ctx.fillRect(x * cell, 0, 1, H)
       for (let y = 1; y < b.h; y++) ctx.fillRect(0, y * cell, W, 1)
     }
-    if (opts.guides) {
-      ctx.fillStyle = palette.guide
-      if (opts.guides === 'x') for (let x = 8; x < b.w; x += 8) ctx.fillRect(x * cell - 1, 0, 2, H)
-      if (opts.guides === 'y') for (let y = 8; y < b.h; y += 8) ctx.fillRect(0, y * cell - 1, W, 2)
-    }
+    const { x: gx, y: gy } = opts.guides ?? {}
+    ctx.fillStyle = palette.guide
+    if (gx) for (let x = gx; x < b.w; x += gx) ctx.fillRect(x * cell - 1, 0, 2, H)
+    if (gy) for (let y = gy; y < b.h; y += gy) ctx.fillRect(0, y * cell - 1, W, 2)
   }
 
   function cellAt(e) {
