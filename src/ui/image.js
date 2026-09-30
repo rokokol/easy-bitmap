@@ -8,7 +8,7 @@ const knobs = [
   { id: 'scale', label: 'scale %', type: 'range', min: 10, max: 400, step: 5, value: 100 },
   { id: 'offsetX', label: 'offset x %', type: 'range', min: -100, max: 100, step: 1, value: 0 },
   { id: 'offsetY', label: 'offset y %', type: 'range', min: -100, max: 100, step: 1, value: 0 },
-  { id: 'smooth', label: 'smooth scaling', type: 'bool', value: true },
+  { id: 'smooth', label: 'smooth scaling (photos; off keeps pixel art sharp)', type: 'bool', value: true },
   { id: 'background', label: 'transparent as', type: 'select', options: { white: 'white', black: 'black' }, value: 'white' },
   { id: 'brightness', label: 'brightness', type: 'range', min: -100, max: 100, step: 1, value: 0 },
   { id: 'contrast', label: 'contrast', type: 'range', min: -100, max: 100, step: 1, value: 0 },
