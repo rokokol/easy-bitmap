@@ -14,7 +14,7 @@
 
 **[bitmap.rokokol.art](https://bitmap.rokokol.art)**
 
-![the editor with a 16x16 heart for a MAX7219 matrix](docs/screenshot.png)
+![a 128x64 OLED picture: a dithered image under text in Departure Mono](docs/editor.png)
 
 </div>
 
@@ -32,6 +32,9 @@ Libraries disagree about what a bitmap is. GyverOLED reads vertical bytes, U8g2 
 - **A preview** of the picture on the display it is meant for
 - **A link** that holds the whole picture, and the last picture kept in the browser
 - Light and dark themes, or the system's
+
+| ![importing an image with fit, tone and dithering controls](docs/image-import.png) | ![eight LCD characters spelling ROKOKOL and a heart on a 16x2 display](docs/lcd.png) |
+| --- | --- |
 
 ## Libraries
 
