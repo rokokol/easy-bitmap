@@ -1,0 +1,74 @@
+---
+name: build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+  # The weekly vendor-sync cascade verifies its branch by calling this workflow with a ref:
+  # the real checks, never a copy of their commands
+  workflow_call:
+    inputs:
+      ref:
+        type: string
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.ref }}
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
+      - run: node --test 'test/unit/*.test.js'
+
+  # Every export preset drawn by its real library, built for the host from test/libs/vendor;
+  # the exceptions are in WORKAROUNDS.md and DEVIATIONS.md
+  libs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.ref }}
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
+      - run: g++ --version
+      - run: node --test test/libs/libs.test.js
+
+  e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.ref }}
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
+      - run: npm ci
+      # The browser build that matches the Playwright version in package-lock.json
+      - run: ./node_modules/.bin/playwright install --with-deps chromium
+      - run: ./node_modules/.bin/playwright test
+
+  lint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.ref }}
+      - name: vendored copies are byte-equal to their source
+        run: ./vendor-sync.sh check
+      - name: CI tools come from the lock, not the registry
+        run: ./check-pins.sh
