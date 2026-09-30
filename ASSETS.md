@@ -9,7 +9,9 @@
 | `assets/DepartureMono-Regular.woff2` | Departure Mono 1.500 | Helena Zhang | [SIL OFL 1.1](assets/DepartureMono-LICENSE.txt) |
 | `assets/font5x8.h` | the 5x8 font of [GyverGFX](https://github.com/GyverLibs/GyverGFX), which the text tool draws with | AlexGyver | [MIT](assets/GyverGFX-LICENSE) |
 
-`assets/font5x8.h` and `assets/GyverGFX-LICENSE` are unmodified copies kept byte-equal to GyverGFX by `vendor-sync.sh`
+| `assets/glcdfont.c` | the classic 5x7 font of [Adafruit GFX](https://github.com/adafruit/Adafruit-GFX-Library), the text tool's second library font | Adafruit Industries | [BSD](assets/Adafruit-GFX-license.txt) |
+
+The two library fonts and their licences are unmodified copies, kept byte-equal to their libraries by `vendor-sync.sh`
 
 ## Doki Doki Literature Club colours
 

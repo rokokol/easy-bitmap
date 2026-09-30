@@ -12,7 +12,7 @@ The site has no versions: what is live at [bitmap.rokokol.art](https://bitmap.ro
 - Noob mode, on by default: 8×8 and 16×16 LED matrices with pen and eraser only
 - Image import with fit, scale, offset, brightness, contrast, gamma, inversion and a choice of dithering
 - Line, rectangle, filled rectangle, fill and shift tools; undo and redo for every change
-- A text tool outside noob mode: GyverGFX's 5×8 font, Cyrillic included, drawn exactly as its `print()` does, or Departure Mono, at 1× to 4×
+- A text tool outside noob mode: GyverGFX's 5×8 font with Cyrillic or Adafruit GFX's classic 5×7, each drawn exactly as its `print()` does, or Departure Mono, at 1× to 4×
 - A preview on the target display, a share link that holds the picture, and the last picture kept in the browser
 - Light, dark and system themes in the Doki Doki Literature Club colours, and the Departure Mono font
 

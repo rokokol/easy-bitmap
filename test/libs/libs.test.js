@@ -11,7 +11,7 @@ import { targets } from './targets.mjs'
 import { byId, fits, optionDefaults } from '../../src/core/formats.js'
 import { emit, emitChars } from '../../src/core/cemit.js'
 import { toRows, create, set } from '../../src/core/bitmap.js'
-import { loadFont, renderFont } from '../../src/core/text.js'
+import { fonts, loadFont, renderFont } from '../../src/core/text.js'
 import { random } from '../unit/helpers.js'
 
 const here = dirname(fileURLToPath(import.meta.url))
@@ -144,24 +144,31 @@ for (const [id, t] of Object.entries(targets)) {
   })
 }
 
-// The text tool renders the 5x8 font itself; GyverGFX print() is the oracle
-const texts = [
-  ['Hello, 42! {x|y}~', 1],
-  ['Привет, ёжик', 1],
-  ['ЁЛКА\nabc', 1],
-  ['Hi\nЁж', 2],
-  ['Z', 3],
-]
+// The text tool renders the libraries' fonts itself; their own print() is the oracle
+const texts = {
+  gyver5x8: {
+    target: 'gyvergfx',
+    lib: 'GyverGFX',
+    cases: [['Hello, 42! {x|y}~', 1], ['Привет, ёжик', 1], ['ЁЛКА\nabc', 1], ['Hi\nЁж', 2], ['Z', 3]],
+    print: (s, n) => `gfx.setScale(${n}); gfx.setCursor(0, 0); gfx.print(${s});`,
+  },
+  adafruit5x7: {
+    target: 'adafruit',
+    lib: 'Adafruit GFX',
+    cases: [['Hello, 42! {x|y}~', 1], ['gjpqy\n@#$%', 1], ['Hi\nOK', 2], ['Z', 3]],
+    print: (s, n) => `display.setTextSize(${n}); display.setTextColor(1); display.setCursor(0, 0); display.print(${s});`,
+  },
+}
 
-if (!only || only.includes('text'))
-  test('GyverGFX: print() draws the text the site renders in the 5x8 font', () => {
-    const font = loadFont(readFileSync(join(here, '../../assets/font5x8.h'), 'utf8'))
-    const pics = texts.map(([s, scale]) => renderFont(s, font, scale))
-    const c = s => JSON.stringify(s)
-    const parts = texts.map(
-      ([s, scale], i) => `namespace pic${i} {\nvoid draw() { gfx.setScale(${scale}); gfx.setCursor(0, 0); gfx.print(${c(s)}); }\n}\n`,
-    )
+for (const [id, t] of Object.entries(texts)) {
+  if (only && !only.includes('text')) continue
+  test(`${t.lib}: print() draws the text the site renders in its font`, () => {
+    const font = fonts.find(f => f.id === id)
+    const glyphs = loadFont(readFileSync(join(here, '../..', font.file), 'utf8'))
+    const pics = t.cases.map(([s, n]) => renderFont(s, glyphs, n, font.index))
+    const parts = t.cases.map(([s, n], i) => `namespace pic${i} {\nvoid draw() { ${t.print(JSON.stringify(s), n)} }\n}\n`)
     const table = pics.map((b, i) => `  { pic${i}::draw, ${b.w}, ${b.h} },`).join('\n')
     const gen = `${parts.join('')}struct Pic { void (*draw)(); int w, h; };\nconst Pic pics[] = {\n${table}\n};\nconst int pic_count = ${pics.length};\n`
-    draws('gyvergfx-text', targets.gyvergfx, pics, gen)
+    draws(`${id}-text`, targets[t.target], pics, gen)
   })
+}

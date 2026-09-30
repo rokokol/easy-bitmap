@@ -95,3 +95,5 @@ check-pins.sh rokokol/ci-skill templates/check-pins.sh fc54eb000b55d210a9a54fa61
 .github/workflows/vendor-sync.yml rokokol/ci-skill templates/github/workflows/vendor-sync.yml fc54eb000b55d210a9a54fa619371418bf3121a6 a5bde77f98d55a43b2c993f4c96a952e0b68010d manual
 assets/font5x8.h GyverLibs/GyverGFX src/fonts/font5x8.h 58b9dfe78af4df377662630b483662e8f67e3ab2 4127f21eeb0e9b8a934913c08d1c4c0e9ad5bad1
 assets/GyverGFX-LICENSE GyverLibs/GyverGFX LICENSE 58b9dfe78af4df377662630b483662e8f67e3ab2 51a308e9653fb9836f5a1cb03a68c6f03974f28f
+assets/glcdfont.c adafruit/Adafruit-GFX-Library glcdfont.c ac6d7c3869a693d406f77b9bfcd486b0673169f0 535da3a396867b55e88dcee7c806ec83f43bd9f3
+assets/Adafruit-GFX-license.txt adafruit/Adafruit-GFX-Library license.txt ac6d7c3869a693d406f77b9bfcd486b0673169f0 7492e93a134119acae08098a6f7fe1e81d1b3122

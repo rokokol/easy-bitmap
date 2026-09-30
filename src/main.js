@@ -5,8 +5,8 @@ import { emit, emitChars, ruleText, identifier } from './core/cemit.js'
 import { parse, inferSize, decode, ParseError } from './core/cparse.js'
 import { createHistory } from './core/history.js'
 import { encodeBitmap, encodeChars, decodeHash } from './core/hash.js'
-import { displays, visibleDisplays, visibleFormats, tools, visibleTools, fonts, NOOB_SIZES } from './core/displays.js'
-import { loadFont, renderFont } from './core/text.js'
+import { displays, visibleDisplays, visibleFormats, tools, visibleTools, NOOB_SIZES } from './core/displays.js'
+import { fonts, loadFont, renderFont } from './core/text.js'
 import { loadDeparture, renderDeparture } from './ui/departure.js'
 import { color } from './ui/colors.js'
 import { createEditor } from './ui/editor.js'
@@ -378,21 +378,23 @@ function selectTool(id) {
 // ---------- text ----------
 
 let hover = null
-let gyverFont = []
+const glyphs = {}
 let textCache = { key: '', bitmap: B.create(0, 0) }
 
 // The text as a bitmap in the chosen font and size, rendered again only when one changes
 function textBitmap() {
   const { value, font, size } = state.text
-  const key = `${font}|${size}|${gyverFont.length}|${value}`
+  const f = fonts.find(x => x.id === font) ?? fonts[0]
+  const key = `${f.id}|${size}|${Object.keys(glyphs).length}|${value}`
   if (textCache.key !== key)
-    textCache = { key, bitmap: font === 'departure' ? renderDeparture(value, size) : renderFont(value, gyverFont, size) }
+    textCache = { key, bitmap: f.file ? renderFont(value, glyphs[f.id] ?? [], size, f.index) : renderDeparture(value, size) }
   return textCache.bitmap
 }
 
 async function loadFonts() {
-  const [source] = await Promise.all([fetch('assets/font5x8.h').then(r => r.text()), loadDeparture()])
-  gyverFont = loadFont(source)
+  const files = fonts.filter(f => f.file)
+  const [sources] = await Promise.all([Promise.all(files.map(f => fetch(f.file).then(r => r.text()))), loadDeparture()])
+  files.forEach((f, i) => (glyphs[f.id] = loadFont(sources[i])))
 }
 
 function resizeTo(w, h, label) {

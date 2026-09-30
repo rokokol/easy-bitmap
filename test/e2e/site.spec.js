@@ -121,6 +121,12 @@ test('the text tool stamps the 5x8 font and Departure Mono, and is not in noob m
   // Ж in the 5x8 font: columns 77 08 7F 08 77, so the first page reads them as bytes
   await expect(code(page)).toContainText('0x77, 0x08, 0x7F, 0x08, 0x77, 0x00')
   await page.click('#clear')
+  // "A" in glcdfont.c: 7C 12 11 12 7C
+  await page.selectOption('#text-font', 'adafruit5x7')
+  await page.fill('#text-input', 'A')
+  await tap(page, 0, 0, 128, 32)
+  await expect(code(page)).toContainText('0x7C, 0x12, 0x11, 0x12, 0x7C, 0x00')
+  await page.click('#clear')
   await page.selectOption('#text-font', 'departure')
   await tap(page, 0, 0, 128, 32)
   await expect(code(page)).not.toContainText('0x77, 0x08, 0x7F')
