@@ -1,0 +1,6 @@
+node_modules/
+test/libs/.build/
+test-results/
+playwright-report/
+.test-logs/
+falsify.out/
