@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="1 1 6 6" shape-rendering="crispEdges" fill="#BB5599">
+  <!-- The page's header draws #heart with <use> in its own colour. The fill above is the
+       palette's plum; test/unit/assets.test.js keeps the two equal -->
+
+  <path id="heart" d="M2 1h1v1H2zM5 1h1v1H5zM1 2h1v1H1zM3 2h4v1H3zM1 3h6v2H1zM2 5h4v1H2zM3 6h2v1H3z"/>
+</svg>

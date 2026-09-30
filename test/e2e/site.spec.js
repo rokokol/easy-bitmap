@@ -23,6 +23,11 @@ async function tap(page, x, y, w, h, erase = false) {
 
 const code = page => page.locator('#code')
 
+test('the header draws the heart from favicon.svg', async ({ page }) => {
+  const width = () => page.evaluate(() => document.querySelector('.brand-mark use').getBBox().width)
+  await expect.poll(width).toBeGreaterThan(0)
+})
+
 test('noob mode is on by default and offers LED matrices with pen and eraser only', async ({ page }) => {
   await expect(page.locator('#noob')).toBeChecked()
   await expect(page.locator('#tool-buttons .tool')).toHaveText(['pen', 'eraser'])
