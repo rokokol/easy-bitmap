@@ -2,6 +2,12 @@
 
 The site has no versions: what is live at [bitmap.rokokol.art](https://bitmap.rokokol.art) is the newest entry below
 
+## 2026-10-05
+
+### Fixed
+
+- Copy code, copy link and the draw call copy again on a page opened over plain HTTP, where a phone browser gives no Clipboard API
+
 ## 2026-09-30
 
 ### Added

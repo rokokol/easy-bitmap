@@ -426,9 +426,27 @@ function toast(text) {
   toast.timer = setTimeout(() => (t.hidden = true), 3200)
 }
 
+// A page over plain HTTP is not a secure context, so navigator.clipboard is undefined there;
+// the selection and execCommand route has no such rule, but only runs inside a user gesture
+function copyBySelection(text) {
+  const field = document.createElement('textarea')
+  field.value = text
+  field.readOnly = true
+  field.style.cssText = 'position:fixed;top:0;left:0;opacity:0'
+  document.body.append(field)
+  field.select()
+  field.setSelectionRange(0, text.length)
+  try {
+    return document.execCommand('copy')
+  } finally {
+    field.remove()
+  }
+}
+
 async function copy(text, what) {
   try {
-    await navigator.clipboard.writeText(text)
+    if (navigator.clipboard) await navigator.clipboard.writeText(text)
+    else if (!copyBySelection(text)) throw new Error('copy command refused')
     toast(`${what} copied`)
   } catch {
     toast('the clipboard is not available here')

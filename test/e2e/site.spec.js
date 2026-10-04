@@ -191,6 +191,28 @@ test('a shared link opens the same picture in a fresh page', async ({ page, cont
   await expect(other.locator('#code')).toHaveText(exported)
 })
 
+test('copy code and copy link work where the page has no Clipboard API, as over plain HTTP', async ({ page }) => {
+  await tap(page, 2, 2, 8, 8)
+  await expect(code(page)).toContainText('0x20')
+  // Plain HTTP is not a secure context, so a phone gets no navigator.clipboard there; the test
+  // removes it and records the text each copy command puts on the clipboard
+  await page.evaluate(() => {
+    Object.defineProperty(navigator, 'clipboard', { value: undefined, configurable: true })
+    window.copied = []
+    document.addEventListener('copy', () => {
+      const { value, selectionStart, selectionEnd } = document.activeElement
+      window.copied.push(value.slice(selectionStart, selectionEnd))
+    })
+  })
+  const exported = await code(page).textContent()
+  await page.click('#copy')
+  await expect(page.locator('#toast')).toHaveText('code copied')
+  await page.click('#share')
+  await expect(page.locator('#toast')).toHaveText('link copied')
+  const copied = await page.evaluate(() => window.copied)
+  expect(copied).toEqual([exported, page.url()])
+})
+
 test('the picture survives a reload', async ({ page }) => {
   await tap(page, 2, 2, 8, 8)
   await expect(code(page)).toContainText('0x20')
