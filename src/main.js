@@ -8,11 +8,10 @@ import { encodeBitmap, encodeChars, decodeHash } from './core/hash.js'
 import { displays, visibleDisplays, visibleFormats, tools, visibleTools, NOOB_SIZES } from './core/displays.js'
 import { fonts, loadFont, renderFont } from './core/text.js'
 import { loadDeparture, renderDeparture } from './ui/departure.js'
-import { color } from './ui/colors.js'
+import { color, startCloud } from '../assets/ddlc-cloud.js'
+import { initTheme } from '../assets/ddlc-theme.js'
 import { createEditor } from './ui/editor.js'
 import { renderBitmapPreview, renderCharsPreview } from './ui/preview.js'
-import { initTheme } from './ui/theme.js'
-import { startCloud } from './ui/cloud.js'
 import { openImageDialog } from './ui/image.js'
 import { load, save } from './ui/storage.js'
 
@@ -716,10 +715,15 @@ restoreSaved()
 openHash()
 wire()
 const cloud = startCloud($('cloud'))
-initTheme($('theme'), $('theme-icon'), () => {
-  editor.recolor()
-  cloud.recolor()
-  refresh()
+initTheme({
+  button: $('theme'),
+  icon: $('theme-icon'),
+  key: 'easy-bitmap:theme',
+  onChange: () => {
+    editor.recolor()
+    cloud.recolor()
+    refresh()
+  },
 })
 refresh({ controls: true })
 loadFonts().then(() => refresh({ light: true }))

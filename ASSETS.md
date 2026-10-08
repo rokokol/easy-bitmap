@@ -1,6 +1,6 @@
 # Assets and third-party content
 
-[LICENSE](LICENSE) (MIT) covers the site's own code. It does not cover the font, the colours or the libraries the tests draw with, listed below
+[LICENSE](LICENSE) (MIT) covers the site's own code. It does not cover the font, the colours, the DDLC web kit or the libraries the tests draw with, listed below
 
 ## Fonts
 
@@ -8,14 +8,13 @@
 | --- | --- | --- | --- |
 | `assets/DepartureMono-Regular.woff2` | Departure Mono 1.500 | Helena Zhang | [SIL OFL 1.1](assets/DepartureMono-LICENSE.txt) |
 | `assets/font5x8.h` | the 5x8 font of [GyverGFX](https://github.com/GyverLibs/GyverGFX), which the text tool draws with | AlexGyver | [MIT](assets/GyverGFX-LICENSE) |
-
 | `assets/glcdfont.c` | the classic 5x7 font of [Adafruit GFX](https://github.com/adafruit/Adafruit-GFX-Library), the text tool's second library font | Adafruit Industries | [BSD](assets/Adafruit-GFX-license.txt) |
 
-The two library fonts and their licences are unmodified copies, kept byte-equal to their libraries by `vendor-sync.sh`
+These fonts and their licences are unmodified copies, kept byte-equal to their sources by `vendor-sync.sh`; Departure Mono comes through ddlc-themes, which vendors it from its upstream
 
 ## Doki Doki Literature Club colours
 
-`assets/ddlc-palette.css` is a copy of [ddlc-palette](https://github.com/rokokol/ddlc-palette), which measures the colours off [ddlc.moe](https://ddlc.moe/). Doki Doki Literature Club is the property of [Team Salvato](https://teamsalvato.com/); this project is unaffiliated with and not endorsed by Team Salvato, uses no official artwork, and follows [their IP guidelines](https://teamsalvato.com/ip-guidelines) as non-commercial fan content
+`assets/ddlc-ui.css`, `assets/ddlc-theme.js` and `assets/ddlc-cloud.js` are copies of the web kit of [ddlc-themes](https://github.com/rokokol/ddlc-themes) (MIT), and the colours in them come from [ddlc-palette](https://github.com/rokokol/ddlc-palette), which measures them off [ddlc.moe](https://ddlc.moe/). Doki Doki Literature Club is the property of [Team Salvato](https://teamsalvato.com/); this project is unaffiliated with and not endorsed by Team Salvato, uses no official artwork, and follows [their IP guidelines](https://teamsalvato.com/ip-guidelines) as non-commercial fan content
 
 ## Libraries in the tests
 

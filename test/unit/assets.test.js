@@ -6,7 +6,7 @@ const read = path => readFileSync(new URL(`../../${path}`, import.meta.url), 'ut
 
 // An SVG favicon cannot load the page's stylesheet, so it carries the colour itself
 test('the favicon is painted in the palette plum', () => {
-  const plum = read('assets/ddlc-palette.css').match(/--ddlc-plum:\s*(#[0-9A-Fa-f]{6})/)[1]
+  const plum = read('assets/ddlc-ui.css').match(/--ddlc-plum:\s*(#[0-9A-Fa-f]{6})/)[1]
   const fill = read('favicon.svg').match(/<svg[^>]*\sfill="(#[0-9A-Fa-f]{6})"/)[1]
   assert.equal(fill.toUpperCase(), plum.toUpperCase())
 })

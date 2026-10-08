@@ -1,211 +1,37 @@
-/* Colours come from assets/ddlc-palette.css (vendored from rokokol/ddlc-palette); this file
-   only maps them to roles. Each role is written once with light-dark(): color-scheme picks
-   the side, following the system until data-theme on <html> pins one */
+/* The page's own rules on top of assets/ddlc-ui.css, the DDLC web kit vendored from
+   rokokol/ddlc-themes: the bar, the cards, the controls, the dialogs and the colour roles
+   come from there. A colour here is a --ddlc-* role or palette colour, never a literal */
 
-@font-face {
-  font-family: 'Departure Mono';
-  src: url('assets/DepartureMono-Regular.woff2') format('woff2');
-  font-weight: 400;
-  font-display: swap;
-}
-
+/* The editor and the background, read by the canvases through a probe element */
 :root {
-  color-scheme: light dark;
-
-  --ground: light-dark(var(--ddlc-paper), var(--ddlc-ink));
-  --ink: light-dark(var(--ddlc-ink), var(--ddlc-paper));
-  --muted: var(--ddlc-jacket);
-  --line: light-dark(var(--ddlc-blush), var(--ddlc-yuri));
-  --grid: light-dark(var(--ddlc-ash), color-mix(in srgb, var(--ddlc-yuri) 70%, var(--ddlc-ink)));
-  --accent: light-dark(var(--ddlc-plum), var(--ddlc-pink));
-  --accent-live: light-dark(var(--ddlc-pink), var(--ddlc-blush));
-  --on-accent: var(--ddlc-paper);
-  --code-ground: light-dark(var(--ddlc-dot), var(--ddlc-yuri-shadow));
-  --panel: color-mix(in srgb, var(--ground) 92%, transparent);
-  --selection: light-dark(var(--ddlc-blush), var(--ddlc-yuri));
-  --danger: var(--ddlc-bow);
-
-  /* The editor and the background, read by the canvases through a probe element */
   --cell-off: light-dark(var(--ddlc-paper), color-mix(in srgb, var(--ddlc-ink) 85%, var(--ddlc-yuri-shadow)));
   --cell-on: light-dark(var(--ddlc-ink), var(--ddlc-blush));
   --byte-guide: var(--ddlc-pink);
-  --cloud: light-dark(var(--ddlc-dot), var(--ddlc-yuri-shadow));
 
-  /* Departure Mono is drawn on an 11 px grid; whole multiples stay sharp */
-  --text: 11px;
-  --text-big: 22px;
-  --gap: 16px;
+  /* The tool strip takes what its buttons need; the panel stays the export's width */
+  --ddlc-tools-width: auto;
+  --ddlc-panel-width: minmax(300px, 360px);
 }
 
-:root[data-theme='light'] { color-scheme: light; }
-:root[data-theme='dark'] { color-scheme: dark; }
+/* The kit moves the tools under the stage from 1240 px; an editor keeps them beside the
+   canvas until the page is too narrow for three columns at all */
+@media (max-width: 1240px) {
+  .work {
+    grid-template-columns: var(--ddlc-tools-width) minmax(0, 1fr) var(--ddlc-panel-width);
+    grid-template-areas: "tools stage panel";
+  }
 
-*,
-*::before,
-*::after { box-sizing: border-box; }
-
-html { background: var(--ground); }
-
-body {
-  margin: 0;
-  min-height: 100vh;
-  color: var(--ink);
-  font: var(--text) / 2 'Departure Mono', ui-monospace, monospace;
-  -webkit-font-smoothing: none;
-  font-smooth: never;
+  .tools {
+    display: flex;
+    align-items: stretch;
+  }
 }
-
-::selection { background: var(--selection); }
-
-a { color: var(--accent); }
-a:hover { color: var(--accent-live); }
-
-:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-}
-
-#cloud {
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  width: 100vw;
-  height: 100vh;
-  pointer-events: none;
-}
-
-[hidden] { display: none !important; }
-
-/* ---------- bar ---------- */
-
-.bar {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 12px var(--gap);
-  padding: 12px var(--gap);
-  border-bottom: 2px solid var(--line);
-  background: var(--panel);
-}
-
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: var(--ink);
-  font-size: var(--text-big);
-  line-height: 1;
-  text-decoration: none;
-}
-
-.brand-mark {
-  width: 22px;
-  height: 22px;
-  fill: var(--accent);
-}
-
-.tabs {
-  display: flex;
-  gap: 4px;
-}
-
-.tabs button {
-  padding: 4px 12px;
-  border: 2px solid transparent;
-  background: none;
-  color: var(--muted);
-  font: inherit;
-  cursor: pointer;
-}
-
-.tabs button:hover { color: var(--ink); }
-
-.tabs button[aria-selected='true'] {
-  border-color: var(--ink);
-  color: var(--ink);
-  box-shadow: 2px 2px 0 var(--accent);
-}
-
-.bar-end {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-left: auto;
-}
-
-.icon-button {
-  display: grid;
-  place-items: center;
-  width: 33px;
-  height: 33px;
-  border: 2px solid transparent;
-  background: none;
-  color: var(--ink);
-  cursor: pointer;
-}
-
-.icon-button:hover {
-  border-color: var(--line);
-  color: var(--accent);
-}
-
-.icon-button svg {
-  width: 16px;
-  height: 16px;
-  fill: currentColor;
-}
-
-.switch {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-right: 8px;
-  cursor: pointer;
-  user-select: none;
-}
-
-.switch input {
-  position: absolute;
-  opacity: 0;
-  pointer-events: none;
-}
-
-.switch-track {
-  position: relative;
-  width: 26px;
-  height: 14px;
-  border: 2px solid var(--ink);
-}
-
-.switch-track::after {
-  content: '';
-  position: absolute;
-  top: 2px;
-  left: 2px;
-  width: 6px;
-  height: 6px;
-  background: var(--muted);
-}
-
-.switch input:checked + .switch-track { background: var(--accent); border-color: var(--accent); }
-.switch input:checked + .switch-track::after { left: 14px; background: var(--on-accent); }
-.switch input:focus-visible + .switch-track { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 /* ---------- layout ---------- */
 
-.work {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) minmax(300px, 360px);
-  gap: var(--gap);
-  align-items: start;
-  padding: var(--gap);
-}
-
 .tools {
   position: sticky;
-  top: var(--gap);
-  display: flex;
-  flex-direction: column;
+  top: var(--ddlc-gap);
   gap: 12px;
   width: 144px;
 }
@@ -216,37 +42,19 @@ a:hover { color: var(--accent-live); }
   gap: 4px;
 }
 
+.tool-group .check {
+  grid-column: span 2;
+}
+
 .tool {
-  min-height: 33px;
   padding: 2px 4px;
-  border: 2px solid var(--line);
-  background: var(--panel);
-  color: var(--ink);
-  font: inherit;
-  cursor: pointer;
+  text-align: center;
 }
 
-.tool:hover { border-color: var(--accent); }
-
-.tool[aria-checked='true'] {
-  border-color: var(--ink);
-  background: var(--ink);
-  color: var(--ground);
-}
-
-.tool:disabled {
-  opacity: 0.4;
-  cursor: default;
-}
-
-.tool-group .check { grid-column: span 2; }
-
-.stage {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  min-width: 0;
+/* A label here reads as one phrase, "pen 1 px", rather than a caption with its value at
+   the far edge */
+.field > span {
+  display: block;
 }
 
 .canvas-wrap {
@@ -263,14 +71,12 @@ a:hover { color: var(--accent-live); }
   touch-action: none;
   cursor: crosshair;
   image-rendering: pixelated;
-  outline: 2px solid var(--ink);
-  box-shadow: 6px 6px 0 var(--line);
+  outline: 2px solid var(--ddlc-text);
+  box-shadow: 6px 6px 0 var(--ddlc-line);
 }
 
 .status {
   min-height: 22px;
-  margin: 0;
-  color: var(--muted);
 }
 
 .slots {
@@ -284,9 +90,9 @@ a:hover { color: var(--accent-live); }
   display: grid;
   gap: 2px;
   padding: 4px;
-  border: 2px solid var(--line);
-  background: var(--panel);
-  color: var(--muted);
+  border: 2px solid var(--ddlc-line);
+  background: var(--ddlc-panel);
+  color: var(--ddlc-muted);
   font: inherit;
   cursor: pointer;
 }
@@ -297,9 +103,9 @@ a:hover { color: var(--accent-live); }
   image-rendering: pixelated;
 }
 
-.slot[aria-checked='true'] {
-  border-color: var(--ink);
-  color: var(--ink);
+.slot[aria-checked="true"] {
+  border-color: var(--ddlc-text);
+  color: var(--ddlc-text);
 }
 
 .preview {
@@ -311,176 +117,33 @@ a:hover { color: var(--accent-live); }
 
 #preview {
   image-rendering: pixelated;
-  outline: 2px solid var(--line);
+  outline: 2px solid var(--ddlc-line);
 }
 
-.preview figcaption { color: var(--muted); }
+.preview figcaption {
+  color: var(--ddlc-muted);
+}
 
 /* ---------- panel ---------- */
 
-.panel {
-  display: flex;
-  flex-direction: column;
-  gap: var(--gap);
-}
-
-.card {
-  padding: 12px var(--gap) var(--gap);
-  border: 2px solid var(--line);
-  background: var(--panel);
-}
-
-.card h2,
-.label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin: 0 0 8px;
-  color: var(--muted);
-  font-size: var(--text);
-  font-weight: 400;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-}
-
-.card h2::before {
-  content: '';
-  width: 6px;
-  height: 6px;
-  background: var(--accent);
-}
-
-.label { margin-top: 8px; }
-
-.field {
-  display: grid;
-  gap: 2px;
-  margin-bottom: 8px;
-  min-width: 0;
-}
-
-.field > span { color: var(--muted); }
-
-.row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  align-items: end;
-}
-
-.row > .field { flex: 1 1 100px; }
-
-input[type='text'],
-input[type='number'],
-select,
-textarea {
-  width: 100%;
-  padding: 4px 8px;
-  border: 2px solid var(--line);
-  border-radius: 0;
-  background: var(--ground);
-  color: var(--ink);
-  font: inherit;
-}
-
-input[type='text']:focus,
-input[type='number']:focus,
-select:focus,
-textarea:focus {
-  border-color: var(--accent);
-  outline: none;
-}
-
-textarea { resize: vertical; }
-
-input[type='range'] {
-  width: 100%;
-  accent-color: var(--accent);
-}
-
-input[type='checkbox'] { accent-color: var(--accent); }
-
-input[type='color'] {
-  width: 44px;
-  height: 26px;
-  padding: 0;
-  border: 2px solid var(--line);
-  background: none;
-}
-
-.check {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  cursor: pointer;
-}
-
 .note {
   margin: 0 0 8px;
-  color: var(--muted);
 }
 
-.note.error { color: var(--danger); }
-
-.segmented {
-  display: flex;
-  border: 2px solid var(--line);
+.usage {
+  max-height: 140px;
 }
 
-.segmented button {
-  flex: 1;
-  padding: 2px 8px;
-  border: 0;
-  background: none;
-  color: var(--muted);
-  font: inherit;
-  cursor: pointer;
+.actions {
+  margin-top: 12px;
 }
 
-.segmented button[aria-pressed='true'] {
-  background: var(--accent);
-  color: var(--on-accent);
+.actions > .button {
+  flex: none;
 }
-
-.code {
-  max-height: 260px;
-  margin: 0;
-  padding: 8px;
-  overflow: auto;
-  background: var(--code-ground);
-  color: var(--ink);
-  font: inherit;
-  white-space: pre;
-}
-
-.usage { max-height: 140px; }
-
-.button {
-  padding: 4px 12px;
-  border: 2px solid var(--ink);
-  background: var(--ground);
-  color: var(--ink);
-  font: inherit;
-  cursor: pointer;
-  box-shadow: 2px 2px 0 var(--ink);
-}
-
-.button:hover { border-color: var(--accent); box-shadow: 2px 2px 0 var(--accent); }
-.button:active { transform: translate(2px, 2px); box-shadow: none; }
-
-.button.primary {
-  border-color: var(--accent);
-  background: var(--accent);
-  color: var(--on-accent);
-  box-shadow: 2px 2px 0 var(--ink);
-}
-
-.button.primary:hover { background: var(--accent-live); border-color: var(--accent-live); }
-
-.actions { margin-top: 12px; }
 
 .help summary {
-  color: var(--muted);
+  color: var(--ddlc-muted);
   text-transform: uppercase;
   letter-spacing: 0.1em;
   cursor: pointer;
@@ -493,37 +156,33 @@ input[type='color'] {
   margin: 8px 0 0;
 }
 
-.help dt { color: var(--accent); }
-.help dd { margin: 0; }
-
-/* noob mode hides everything marked advanced */
-body.noob [data-advanced] { display: none !important; }
-
-/* ---------- dialogs and toast ---------- */
-
-dialog {
-  max-width: min(760px, calc(100vw - 32px));
-  padding: 0;
-  border: 2px solid var(--ink);
-  background: var(--ground);
-  color: var(--ink);
-  box-shadow: 6px 6px 0 var(--accent);
+.help dt {
+  color: var(--ddlc-accent);
 }
 
-dialog::backdrop { background: color-mix(in srgb, var(--ddlc-ink) 55%, transparent); }
+.help dd {
+  margin: 0;
+}
 
-.dialog { padding: var(--gap); }
+/* noob mode hides everything marked advanced */
+body.noob [data-advanced] {
+  display: none !important;
+}
 
-.dialog h2 {
-  margin: 0 0 12px;
-  font-size: var(--text-big);
-  font-weight: 400;
+/* ---------- dialogs ---------- */
+
+dialog {
+  padding: 0;
+}
+
+.dialog {
+  padding: var(--ddlc-gap);
 }
 
 .image-layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 260px;
-  gap: var(--gap);
+  gap: var(--ddlc-gap);
   align-items: start;
 }
 
@@ -531,10 +190,13 @@ dialog::backdrop { background: color-mix(in srgb, var(--ddlc-ink) 55%, transpare
   width: 100%;
   image-rendering: pixelated;
   background: var(--cell-off);
-  border: 2px solid var(--line);
+  border: 2px solid var(--ddlc-line);
 }
 
-.knobs { display: grid; gap: 2px; }
+.knobs {
+  display: grid;
+  gap: 2px;
+}
 
 .candidates {
   display: flex;
@@ -542,23 +204,13 @@ dialog::backdrop { background: color-mix(in srgb, var(--ddlc-ink) 55%, transpare
   gap: 8px;
 }
 
-.toast {
-  position: fixed;
-  bottom: var(--gap);
-  left: 50%;
-  z-index: 10;
-  padding: 6px 12px;
-  border: 2px solid var(--ink);
-  background: var(--ground);
-  color: var(--ink);
-  box-shadow: 3px 3px 0 var(--accent);
-  transform: translateX(-50%);
-}
-
 /* ---------- narrow screens ---------- */
 
 @media (max-width: 960px) {
-  .work { grid-template-columns: minmax(0, 1fr); }
+  .work {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "tools" "stage" "panel";
+  }
 
   .tools {
     position: static;
@@ -567,12 +219,37 @@ dialog::backdrop { background: color-mix(in srgb, var(--ddlc-ink) 55%, transpare
     width: auto;
   }
 
-  .tool-group { grid-template-columns: repeat(4, auto); }
-  .tools .field { width: 140px; }
-  .canvas-wrap { min-height: 0; }
-  .image-layout { grid-template-columns: minmax(0, 1fr); }
+  .tool-group {
+    grid-template-columns: repeat(4, auto);
+  }
+
+  .tools .field {
+    width: 140px;
+  }
+
+  .canvas-wrap {
+    min-height: 0;
+  }
+
+  .image-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 @media (max-width: 560px) {
-  .bar-end { margin-left: 0; }
+  .bar-end {
+    margin-left: 0;
+  }
+}
+
+/* The kit drops the brand's mark and the gaps in the bar on a phone, for a long title; this
+   one is short, and the heart is the site's icon */
+@media (max-width: 480px) {
+  .brand svg {
+    display: block;
+  }
+
+  .bar-end {
+    gap: 8px;
+  }
 }

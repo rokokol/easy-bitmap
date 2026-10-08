@@ -1,7 +1,7 @@
 // Image import: the knob table below builds both the dialog's controls and the pipeline
 // input. Order of work: fit the image into w x h, read lightness, apply tone, dither
 import { luminance, adjust, dither, algorithms } from '../core/dither.js'
-import { color } from './colors.js'
+import { color } from '../../assets/ddlc-cloud.js'
 
 const knobs = [
   { id: 'fit', label: 'fit', type: 'select', options: { contain: 'contain', cover: 'cover', stretch: 'stretch' }, value: 'contain' },

@@ -34,7 +34,7 @@ function bayer(n) {
   return out
 }
 
-// Thresholds in (0, 1) of an n x n Bayer matrix, shared with the background cloud
+// Thresholds in (0, 1) of an n x n Bayer matrix
 export function bayerThresholds(n) {
   return bayer(n).map(row => row.map(v => (v + 0.5) / (n * n)))
 }

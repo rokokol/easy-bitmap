@@ -2,6 +2,13 @@
 
 The site has no versions: what is live at [bitmap.rokokol.art](https://bitmap.rokokol.art) is the newest entry below
 
+## 2026-10-08
+
+### Changed
+
+- The page is drawn with the DDLC web kit of [ddlc-themes](https://github.com/rokokol/ddlc-themes), shared with the other DDLC pages, so captions and notes are a darker grey that reads on white
+- The background cloud's pixels have a slightly wider gap, the same lattice as the other DDLC pages
+
 ## 2026-10-05
 
 ### Fixed

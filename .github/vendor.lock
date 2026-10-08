@@ -3,7 +3,6 @@
 # copy in place: change it at its source and let the weekly cascade bring it back. How it
 # works: references/bump-cascade.md in https://github.com/rokokol/ci-skill
 vendor-sync.sh rokokol/ci-skill templates/vendor-sync.sh fc54eb000b55d210a9a54fa619371418bf3121a6 176a58470c142a98cb6434a889b3e98fea266ad3
-assets/ddlc-palette.css rokokol/ddlc-palette dist/palette.css a85f5ae3ac02cdfdd40a82d77040fe9660921f0b 4bd7aa6bf53c0f115a833bd350a6512c43acc5bf
 test/libs/vendor/GyverGFX/LICENSE GyverLibs/GyverGFX LICENSE 58b9dfe78af4df377662630b483662e8f67e3ab2 51a308e9653fb9836f5a1cb03a68c6f03974f28f
 test/libs/vendor/EpoxyDuino/LICENSE bxparks/EpoxyDuino LICENSE 72fc3c50641bfb926a0ecf02d68ef6e6698743ad 796278c94b6eac5319d8cb132388b34ed4767d88
 test/libs/vendor/microLED/LICENSE GyverLibs/microLED LICENSE 19defce2311a7e79e882a3d497d240a7a8982b77 353b7ee2f15e667de4ec02171a4f843e3c153760
@@ -97,3 +96,8 @@ assets/font5x8.h GyverLibs/GyverGFX src/fonts/font5x8.h 58b9dfe78af4df377662630b
 assets/GyverGFX-LICENSE GyverLibs/GyverGFX LICENSE 58b9dfe78af4df377662630b483662e8f67e3ab2 51a308e9653fb9836f5a1cb03a68c6f03974f28f
 assets/glcdfont.c adafruit/Adafruit-GFX-Library glcdfont.c ac6d7c3869a693d406f77b9bfcd486b0673169f0 535da3a396867b55e88dcee7c806ec83f43bd9f3
 assets/Adafruit-GFX-license.txt adafruit/Adafruit-GFX-Library license.txt ac6d7c3869a693d406f77b9bfcd486b0673169f0 7492e93a134119acae08098a6f7fe1e81d1b3122
+assets/ddlc-ui.css rokokol/ddlc-themes dist/ddlc-ui.css b06ac2320866c090f467f98e510b4e6a15d6d74b 220c8e188ec761291bbcff121a7268cb8edfd7be
+assets/ddlc-theme.js rokokol/ddlc-themes dist/ddlc-theme.js b06ac2320866c090f467f98e510b4e6a15d6d74b 12ec9eda878a5794061bb7bd21d71dd4feddd045
+assets/ddlc-cloud.js rokokol/ddlc-themes dist/ddlc-cloud.js b06ac2320866c090f467f98e510b4e6a15d6d74b 981b9b58d7b5be7a61f2b7b4ab06c6d3b5a9fdf8
+assets/DepartureMono-Regular.woff2 rokokol/ddlc-themes dist/DepartureMono-Regular.woff2 b06ac2320866c090f467f98e510b4e6a15d6d74b b4a23dc1dad1c934005d0862e62c0294636afb08
+assets/DepartureMono-LICENSE.txt rokokol/ddlc-themes dist/DepartureMono-LICENSE.txt b06ac2320866c090f467f98e510b4e6a15d6d74b de52476183807bbfc04e8ae7bced1dc9cbcbfd2f

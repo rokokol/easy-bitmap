@@ -1,6 +1,6 @@
 // The pixel canvas: draws a bitmap at a whole number of device pixels per cell and turns
 // pointer input into cell events. What a stroke does is main.js's business
-import { color } from './colors.js'
+import { color } from '../../assets/ddlc-cloud.js'
 
 const MIN_CELL = 2
 const MAX_CELL = 48
@@ -17,7 +17,7 @@ export function createEditor(canvas, wrap, { onStart, onMove, onEnd, onHover }) 
     palette = {
       off: color('--cell-off'),
       on: color('--cell-on'),
-      grid: color('--grid'),
+      grid: color('--ddlc-grid'),
       guide: color('--byte-guide'),
     }
   }

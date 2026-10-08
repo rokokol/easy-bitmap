@@ -1,6 +1,6 @@
 // A picture of the picture on its hardware: an OLED panel, an LED matrix, a mono LCD, or a
 // 16x2 character LCD with the custom characters in its first row
-import { color } from './colors.js'
+import { color } from '../../assets/ddlc-cloud.js'
 
 const MAX_WIDTH = 264
 
