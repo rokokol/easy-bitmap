@@ -96,7 +96,7 @@ assets/font5x8.h GyverLibs/GyverGFX src/fonts/font5x8.h 58b9dfe78af4df377662630b
 assets/GyverGFX-LICENSE GyverLibs/GyverGFX LICENSE 58b9dfe78af4df377662630b483662e8f67e3ab2 51a308e9653fb9836f5a1cb03a68c6f03974f28f
 assets/glcdfont.c adafruit/Adafruit-GFX-Library glcdfont.c ac6d7c3869a693d406f77b9bfcd486b0673169f0 535da3a396867b55e88dcee7c806ec83f43bd9f3
 assets/Adafruit-GFX-license.txt adafruit/Adafruit-GFX-Library license.txt ac6d7c3869a693d406f77b9bfcd486b0673169f0 7492e93a134119acae08098a6f7fe1e81d1b3122
-assets/ddlc-ui.css rokokol/ddlc-themes dist/ddlc-ui.css 816e548315b11703460e3ba706bdf4b686f2ac32 8847d9565858e8459206e870816932eeb0826ca9
+assets/ddlc-ui.css rokokol/ddlc-themes dist/ddlc-ui.css 2ef464ba812172738001df90c295a963b7fd0859 5d47b1b1e805132bf45011c90a0e6abc04ad8779
 assets/ddlc-theme.js rokokol/ddlc-themes dist/ddlc-theme.js b06ac2320866c090f467f98e510b4e6a15d6d74b 12ec9eda878a5794061bb7bd21d71dd4feddd045
 assets/ddlc-cloud.js rokokol/ddlc-themes dist/ddlc-cloud.js b06ac2320866c090f467f98e510b4e6a15d6d74b 981b9b58d7b5be7a61f2b7b4ab06c6d3b5a9fdf8
 assets/DepartureMono-Regular.woff2 rokokol/ddlc-themes dist/DepartureMono-Regular.woff2 b06ac2320866c090f467f98e510b4e6a15d6d74b b4a23dc1dad1c934005d0862e62c0294636afb08

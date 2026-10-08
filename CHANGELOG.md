@@ -2,6 +2,12 @@
 
 The site has no versions: what is live at [bitmap.rokokol.art](https://bitmap.rokokol.art) is the newest entry below
 
+## 2026-10-09
+
+### Changed
+
+- Checkboxes are pixel squares like the noob mode switch, instead of the browser's rounded boxes
+
 ## 2026-10-08
 
 ### Changed

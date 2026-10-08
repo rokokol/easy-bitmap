@@ -559,8 +559,27 @@ input[type="range"] {
   accent-color: var(--ddlc-accent);
 }
 
+/* A checkbox drawn as a square frame, with the switch's knob in it when it is on */
 input[type="checkbox"] {
-  accent-color: var(--ddlc-accent);
+  appearance: none;
+  flex: none;
+  width: 14px;
+  height: 14px;
+  margin: 0;
+  padding: 2px;
+  border: 2px solid var(--ddlc-text);
+  background: none;
+  cursor: pointer;
+}
+
+input[type="checkbox"]:checked {
+  border-color: var(--ddlc-accent);
+  background: var(--ddlc-accent) content-box;
+}
+
+input[type="checkbox"]:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
 input[type="color"] {
