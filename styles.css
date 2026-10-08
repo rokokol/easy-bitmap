@@ -241,15 +241,3 @@ dialog {
     margin-left: 0;
   }
 }
-
-/* The kit drops the brand's mark and the gaps in the bar on a phone, for a long title; this
-   one is short, and the heart is the site's icon */
-@media (max-width: 480px) {
-  .brand svg {
-    display: block;
-  }
-
-  .bar-end {
-    gap: 8px;
-  }
-}

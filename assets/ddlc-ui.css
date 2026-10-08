@@ -394,16 +394,6 @@ body {
   }
 }
 
-@media (max-width: 480px) {
-  .brand svg {
-    display: none;
-  }
-
-  .bar-end {
-    gap: 0;
-  }
-}
-
 /* The canvas or the picture a page is about: framed in ink, with a hard shadow */
 .framed {
   display: block;
