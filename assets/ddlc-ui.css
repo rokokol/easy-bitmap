@@ -43,10 +43,12 @@
   --ddlc-base0D: #72D0FA;
   --ddlc-base0E: #DD77BB;
   --ddlc-base0F: #8C1132;
-  --ddlc-font-prose: Doki, Spectral, Georgia, 'Times New Roman', serif;
+  --ddlc-font-prose: Nunito, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --ddlc-font-heading: Doki, Nunito, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   --ddlc-font-data: 'Departure Mono', 'DepartureMono Nerd Font Mono', 'DepartureMono Nerd Font', ui-monospace, 'SF Mono', Menlo, monospace;
   --ddlc-font-sans: system-ui, -apple-system, 'Segoe UI', sans-serif;
   --ddlc-ground: light-dark(var(--ddlc-paper), var(--ddlc-ink));
+  --ddlc-dots: light-dark(var(--ddlc-dot), color-mix(in srgb, var(--ddlc-yuri-shadow) 75%, var(--ddlc-ink)));
   --ddlc-text: light-dark(var(--ddlc-ink), var(--ddlc-paper));
   --ddlc-muted: light-dark(color-mix(in srgb, var(--ddlc-ink) 55%, var(--ddlc-jacket)), color-mix(in srgb, var(--ddlc-jacket) 75%, var(--ddlc-paper)));
   --ddlc-faint: var(--ddlc-jacket);
@@ -55,6 +57,8 @@
   --ddlc-grid: light-dark(var(--ddlc-ash), color-mix(in srgb, var(--ddlc-yuri) 70%, var(--ddlc-ink)));
   --ddlc-accent: light-dark(var(--ddlc-plum), var(--ddlc-pink));
   --ddlc-accent-live: light-dark(var(--ddlc-pink), var(--ddlc-blush));
+  --ddlc-link: light-dark(var(--ddlc-plum), var(--ddlc-blush));
+  --ddlc-link-live: light-dark(var(--ddlc-pink), var(--ddlc-paper));
   --ddlc-on-accent: var(--ddlc-paper);
   --ddlc-panel: color-mix(in srgb, var(--ddlc-ground) 92%, transparent);
   --ddlc-selection: light-dark(color-mix(in srgb, var(--ddlc-blush) 80%, transparent), color-mix(in srgb, var(--ddlc-yuri) 90%, transparent));
@@ -73,6 +77,15 @@
   --ddlc-board-shade: light-dark(color-mix(in srgb, var(--ddlc-board) 80%, var(--ddlc-jacket)), color-mix(in srgb, var(--ddlc-board) 60%, var(--ddlc-ink)));
   --ddlc-board-frame: light-dark(var(--ddlc-dot), var(--ddlc-board-shade));
   --ddlc-board-drop: var(--ddlc-blush);
+  --ddlc-kind-note: var(--ddlc-sayori-eye);
+  --ddlc-kind-summary: var(--ddlc-rule);
+  --ddlc-kind-tip: var(--ddlc-pink);
+  --ddlc-kind-success: var(--ddlc-ok);
+  --ddlc-kind-warning: var(--ddlc-sayori);
+  --ddlc-kind-danger: var(--ddlc-danger);
+  --ddlc-kind-example: var(--ddlc-yuri);
+  --ddlc-kind-quote: var(--ddlc-jacket);
+  --ddlc-kind-experiment: var(--ddlc-ribbon);
   --ddlc-window-ground: var(--ddlc-base00);
   --ddlc-window-text: var(--ddlc-base05);
   --ddlc-window-bar: var(--ddlc-base01);
@@ -106,6 +119,8 @@
   --ddlc-syntax-raw: var(--ddlc-base0B);
   --ddlc-syntax-list: var(--ddlc-base0E);
   --ddlc-syntax-quote: var(--ddlc-base03);
+  --ddlc-polka-tile: 120px;
+  --ddlc-polka-dot: 24px;
   color-scheme: light dark;
 }
 
@@ -130,11 +145,11 @@ html {
 }
 
 a {
-  color: var(--ddlc-accent);
+  color: var(--ddlc-link);
 }
 
 a:hover {
-  color: var(--ddlc-accent-live);
+  color: var(--ddlc-link-live);
 }
 
 :focus-visible {
