@@ -121,6 +121,7 @@
   --ddlc-syntax-quote: var(--ddlc-base03);
   --ddlc-polka-tile: 120px;
   --ddlc-polka-dot: 24px;
+  --ddlc-polka-period: 8s;
   color-scheme: light dark;
 }
 
