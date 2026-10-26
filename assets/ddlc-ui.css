@@ -3,8 +3,9 @@
 /* The DDLC web kit: a pixel interface on the Departure Mono grid, as easy-bitmap and
    fly-vs-cybersafe draw it. Link it and lay a page out of .bar, .work and .card; the
    classes below are the whole vocabulary. Light or dark follows the system until
-   data-theme="light|dark" on <html> pins a side; ddlc-theme.js cycles the three.
-   DepartureMono-Regular.woff2 is expected beside this file */
+   data-theme="light|dark" on <html> pins a side; ddlc-theme.js cycles the three. A page's
+   own heading reads --ddlc-font-heading, which data-ddlc-heading="plain" on <html> sets
+   to the prose face with no Doki. DepartureMono-Regular.woff2 is expected beside this file */
 
 :root {
   --ddlc-paper: #FFFFFF;
@@ -43,8 +44,8 @@
   --ddlc-base0D: #72D0FA;
   --ddlc-base0E: #DD77BB;
   --ddlc-base0F: #8C1132;
-  --ddlc-font-prose: Nunito, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  --ddlc-font-heading: Doki, Nunito, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --ddlc-font-prose: 'Mya Nunito', Nunito, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --ddlc-font-heading: Doki, 'Mya Nunito', Nunito, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   --ddlc-font-data: 'Departure Mono', 'DepartureMono Nerd Font Mono', 'DepartureMono Nerd Font', ui-monospace, 'SF Mono', Menlo, monospace;
   --ddlc-font-sans: system-ui, -apple-system, 'Segoe UI', sans-serif;
   --ddlc-ground: light-dark(var(--ddlc-paper), var(--ddlc-ink));
@@ -124,6 +125,8 @@
   --ddlc-polka-period: 8s;
   color-scheme: light dark;
 }
+
+:root[data-ddlc-heading="plain"] { --ddlc-font-heading: 'Mya Nunito', Nunito, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; }
 
 :root[data-theme="light"] { color-scheme: light; }
 :root[data-theme="dark"] { color-scheme: dark; }
