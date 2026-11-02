@@ -48,6 +48,8 @@ public:
   virtual void writeLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1,
                          uint16_t color);
   virtual void endWrite(void);
+  virtual void clearDisplay(void);
+  virtual void display(void);
 
   // CONTROL API
   // These MAY be overridden by the subclass to provide device-specific
@@ -78,6 +80,8 @@ public:
   void fillCircle(int16_t x0, int16_t y0, int16_t r, uint16_t color);
   void fillCircleHelper(int16_t x0, int16_t y0, int16_t r, uint8_t cornername,
                         int16_t delta, uint16_t color);
+  void fillQuarterCircle(int16_t x0, int16_t y0, int16_t r, uint8_t corners,
+                         uint16_t color);
   void drawEllipse(int16_t x0, int16_t y0, int16_t rw, int16_t rh,
                    uint16_t color);
   void fillEllipse(int16_t x0, int16_t y0, int16_t rw, int16_t rh,
@@ -350,6 +354,14 @@ public:
   /**********************************************************************/
   bool isPressed(void) { return currstate; };
 
+  /**********************************************************************/
+  /*!
+    @brief    Get the label text
+    @returns  the const char pointer of the button label
+  */
+  /**********************************************************************/
+  const char *getLabel(void) const { return _label; };
+
 private:
   Adafruit_GFX *_gfx;
   int16_t _x1, _y1; // Coordinates of top-left corner
@@ -389,6 +401,9 @@ protected:
                      ///< nothing
 
 private:
+  // No copies: the copy and the original would both free the buffer
+  GFXcanvas1(const GFXcanvas1 &) = delete;
+  GFXcanvas1 &operator=(const GFXcanvas1 &) = delete;
 #ifdef __AVR__
   // Bitmask tables of 0x80>>X and ~(0x80>>X), because X>>Y is slow on AVR
   static const uint8_t PROGMEM GFXsetBit[], GFXclrBit[];
@@ -420,6 +435,11 @@ protected:
   uint8_t *buffer;   ///< Raster data: no longer private, allow subclass access
   bool buffer_owned; ///< If true, destructor will free buffer, else it will do
                      ///< nothing
+
+private:
+  // No copies: the copy and the original would both free the buffer
+  GFXcanvas8(const GFXcanvas8 &) = delete;
+  GFXcanvas8 &operator=(const GFXcanvas8 &) = delete;
 };
 
 ///  A GFX 16-bit canvas context for graphics
@@ -448,6 +468,11 @@ protected:
   uint16_t *buffer;  ///< Raster data: no longer private, allow subclass access
   bool buffer_owned; ///< If true, destructor will free buffer, else it will do
                      ///< nothing
+
+private:
+  // No copies: the copy and the original would both free the buffer
+  GFXcanvas16(const GFXcanvas16 &) = delete;
+  GFXcanvas16 &operator=(const GFXcanvas16 &) = delete;
 };
 
 #endif // _ADAFRUIT_GFX_H
